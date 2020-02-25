@@ -1,0 +1,6 @@
+C:\Users\yeico\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\Combined1Lexer.cs
+C:\Users\yeico\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\Combined1Parser.cs
+C:\Users\yeico\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\Combined1Listener.cs
+C:\Users\yeico\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\Combined1BaseListener.cs
+C:\Users\yeico\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\Combined1Visitor.cs
+C:\Users\yeico\source\repos\ConsoleApp1\ConsoleApp1\obj\Debug\Combined1BaseVisitor.cs
