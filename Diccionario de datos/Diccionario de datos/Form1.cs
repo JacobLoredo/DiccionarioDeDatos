@@ -407,7 +407,7 @@ namespace Diccionario_de_datos
                 {
                     if (String.Compare(entSeleccionada.PadRight(29), ent.nombre) == 0)
                     {
-                        Form2 f2 = new Form2(ent, nombreArchivo, tamArchivo);
+                        Form2 f2 = new Form2(ent, nombreArchivo, tamArchivo,lsEntidad);
                         f2.ShowDialog();
                         break;
                     }

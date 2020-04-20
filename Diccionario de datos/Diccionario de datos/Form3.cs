@@ -274,7 +274,7 @@ namespace Diccionario_de_datos
             {
                 switch (atr.tipoIndice)
                 {
-                    case 2: //Clave de búsqueda
+                    case 2: //Clave de búsqueda//cambiar caso 
                         if (dgvRegistros.Rows.Count > 2)
                             claveDeBusqueda(atr, col);
                         break;
@@ -296,6 +296,102 @@ namespace Diccionario_de_datos
             guardaDGV();
         }
 
+
+        private void escribeRegistrosPorIndice2()
+        {
+            long dirRegistroActual = 0;
+            long dirSigReg = 0;
+
+
+            BinaryWriter bw;
+            FileStream guardar = new FileStream(nombreEntidad + ".dat", FileMode.OpenOrCreate, FileAccess.Write);
+            bw = new BinaryWriter(guardar);
+
+            if (guardar.Length == 0)
+            {
+                tamArchivoData = 0;
+            }
+
+            tamArchivoData = guardar.Length;
+            dirRegistroActual = guardar.Length;
+
+            bw.Seek((int)tamArchivoData, SeekOrigin.Begin);
+
+            int i = 0;  // i es el textbox que se esta recorriendo
+
+            int n = dgvRegistros.Rows.Add();
+            dgvRegistros.Rows[n].Cells[0].Value = dirRegistroActual;
+
+            //bw.Write(dirRegistroActual);
+            //direcciones.Add(dirRegistroActual);
+            foreach (TextBox tb in textBoxes)
+            {
+                switch (atributos[i].tipoDato)//Agrega el valor nuevo al DGV.
+                {
+                    case 'E':
+                        int valor = int.Parse(tb.Text);
+                        dgvRegistros.Rows[n].Cells[i + 1].Value = valor;
+                        break;
+
+                    case 'C':
+                        string cadena = tb.Text.PadRight(atributos[i].longDato - 1);
+                        dgvRegistros.Rows[n].Cells[i + 1].Value = cadena;
+                        // MessageBox.Show(cadena.Length.ToString()); validar
+                        break;
+                }
+
+                switch (atributos[i].tipoIndice)//Verifica el tipo de indice a escribir en el archivo .idx
+                {
+                    case 2: //Indice Primario
+                        indicePrimarioChido(atributos[i], tb.Text, dirRegistroActual);//tipo de atributo, valor que entra y direccion del registro
+                        break;
+
+                    case 3: //Indice Secundario
+                        indiceSecundario(atributos[i], tb.Text, dirRegistroActual);//tipo de atributo, valor que entra y direccion del registro
+                        break;
+                }
+                tb.Text = "";
+                i++;
+            }
+
+            if (dgvRegistros.Rows.Count > 2)
+            {
+                dgvRegistros.Rows[n - 1].Cells[i + 1].Value = dirRegistroActual;
+            }
+
+            dirSigReg = -1;
+            dgvRegistros.Rows[n].Cells[i + 1].Value = dirSigReg;
+            guardar.Close();
+            bw.Close();
+
+            guardaDGV();
+
+            int col = 1;
+            foreach (Atributo atr in atributos)
+            {
+                switch (atr.tipoIndice)
+                {
+                    case 1: //Clave de búsqueda//cambiar caso 
+                        if (dgvRegistros.Rows.Count > 2)
+                            claveDeBusqueda(atr, col);
+                        break;
+                }
+                col++;
+            }
+
+            entActual.dirDatos = cabecera;
+
+            col = 1;
+            foreach (Atributo atr in atributos)
+            {
+                if (atr.tipoIndice == 6)
+                {
+                    hashDinamico(atributos[col - 1], Convert.ToString(dgvRegistros.Rows[n].Cells[col].Value), dirRegistroActual);
+                }
+                col++;
+            }
+            guardaDGV();
+        }
         /*Método que elige si la clave de busqueda se hara con datos int o string*/
         private void claveDeBusqueda(Atributo atr, int col)
         {

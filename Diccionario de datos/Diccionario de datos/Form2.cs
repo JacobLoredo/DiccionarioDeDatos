@@ -17,14 +17,15 @@ namespace Diccionario_de_datos
         string nomArchivo;
         long tamArchivo;
         long cabeceraAtr;
-        
+        List<Entidad> Aux = new List<Entidad>();
         /*Constructor del Form2*/
-        public Form2(Entidad agrega, string archivo, long tam)
+        public Form2(Entidad agrega, string archivo, long tam,List<Entidad> ls)
         {
             InitializeComponent();
             entidadSel = agrega;
             nomArchivo = archivo;
             tamArchivo = tam;
+            Aux = ls;
         }
         
         private void Form2_Load(object sender, EventArgs e)
@@ -324,6 +325,30 @@ namespace Diccionario_de_datos
         private void button1_Click(object sender, EventArgs e)
         {
             bt_VerIndices_Click(sender, e);
+            
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void cb_TipoIndice_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cb_TipoIndice.SelectedIndex == 3)
+            {
+                comboBox1.Enabled = true;
+                for (int i = 0; i < Aux.Count; i++)
+                {
+                    comboBox1.Items.Add(Aux[i].nombre.ToString());
+                }
+                
+
+            }
+            else
+            {
+                comboBox1.Enabled = false;
+            }
         }
     }
 }
