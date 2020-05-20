@@ -73,7 +73,7 @@
             this.dgvAtributos.Location = new System.Drawing.Point(12, 61);
             this.dgvAtributos.Name = "dgvAtributos";
             this.dgvAtributos.RowHeadersWidth = 62;
-            this.dgvAtributos.Size = new System.Drawing.Size(815, 189);
+            this.dgvAtributos.Size = new System.Drawing.Size(1032, 189);
             this.dgvAtributos.TabIndex = 0;
             // 
             // col_Atributo
@@ -246,7 +246,8 @@
             "1",
             "2",
             "3",
-            "6"});
+            "6",
+            "8"});
             this.cb_TipoIndice.Location = new System.Drawing.Point(325, 337);
             this.cb_TipoIndice.Name = "cb_TipoIndice";
             this.cb_TipoIndice.Size = new System.Drawing.Size(52, 21);
@@ -287,7 +288,7 @@
             this.bt_VerIndices.Name = "bt_VerIndices";
             this.bt_VerIndices.Size = new System.Drawing.Size(99, 31);
             this.bt_VerIndices.TabIndex = 19;
-            this.bt_VerIndices.Text = "hash";
+            this.bt_VerIndices.Text = "hash dinamica";
             this.bt_VerIndices.UseVisualStyleBackColor = true;
             this.bt_VerIndices.Click += new System.EventHandler(this.bt_VerIndices_Click);
             // 
@@ -324,7 +325,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(873, 441);
+            this.ClientSize = new System.Drawing.Size(1056, 441);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);

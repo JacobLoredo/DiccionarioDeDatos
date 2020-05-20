@@ -33,6 +33,7 @@
             this.DirReg = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bt_ModificarReg = new System.Windows.Forms.Button();
             this.bt_EliminaReg = new System.Windows.Forms.Button();
+            this.btn_busqueda = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRegistros)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,17 +82,29 @@
             this.bt_EliminaReg.UseVisualStyleBackColor = true;
             this.bt_EliminaReg.Click += new System.EventHandler(this.bt_EliminaReg_Click);
             // 
+            // btn_busqueda
+            // 
+            this.btn_busqueda.Location = new System.Drawing.Point(695, 81);
+            this.btn_busqueda.Name = "btn_busqueda";
+            this.btn_busqueda.Size = new System.Drawing.Size(99, 23);
+            this.btn_busqueda.TabIndex = 4;
+            this.btn_busqueda.Text = "Busqueda";
+            this.btn_busqueda.UseVisualStyleBackColor = true;
+            this.btn_busqueda.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(807, 483);
+            this.Controls.Add(this.btn_busqueda);
             this.Controls.Add(this.bt_EliminaReg);
             this.Controls.Add(this.bt_ModificarReg);
             this.Controls.Add(this.dgvRegistros);
             this.Controls.Add(this.bt_Guardar);
             this.Name = "Form3";
             this.Text = "Captura la información";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form3_FormClosing);
             this.Load += new System.EventHandler(this.Form3_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvRegistros)).EndInit();
             this.ResumeLayout(false);
@@ -105,5 +118,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DirReg;
         private System.Windows.Forms.Button bt_ModificarReg;
         private System.Windows.Forms.Button bt_EliminaReg;
+        private System.Windows.Forms.Button btn_busqueda;
     }
 }

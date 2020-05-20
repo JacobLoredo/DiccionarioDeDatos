@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Diccionario_de_datos
 {
@@ -59,7 +53,7 @@ namespace Diccionario_de_datos
             if (atr.tipoIndice == 6)//Hash dinamico
             {
                 lisStr = new List<string>();
-                registros = 1040 / 8;
+                registros = 1036 / 8;
                 leeidxHash();
             }
             else
@@ -220,7 +214,7 @@ namespace Diccionario_de_datos
             for (int i = 0; i < registros; i++)
             {
                 int n = dgvHash.Rows.Add();
-                if(i < lsBin.Count)
+                if (i < lsBin.Count)
                     dgvHash.Rows[n].Cells[0].Value = lsBin[i];
                 dgvHash.Rows[n].Cells[1].Value = reader.ReadInt64();
             }
@@ -228,7 +222,7 @@ namespace Diccionario_de_datos
             dgvHash.Rows[dgvHash.Rows.Count - 2].Cells[2].Value = sigTabla;
 
 
-            if(sigTabla != -1)
+            if (sigTabla != -1)
             {
                 reader.BaseStream.Position = sigTabla + 4;
                 for (int i = 0; i < registros; i++)
@@ -262,9 +256,9 @@ namespace Diccionario_de_datos
             {
                 int celda = 0;
                 int n = dgvCajonHash.Rows.Add();
-                foreach(Atributo atr in lsAtr)
+                foreach (Atributo atr in lsAtr)
                 {
-                    switch(atr.tipoDato)
+                    switch (atr.tipoDato)
                     {
                         case 'E':
                             int valor = reader.ReadInt32();

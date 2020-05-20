@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 
@@ -23,6 +18,10 @@ namespace Diccionario_de_datos
         int tamRegistro = 0;
         long cabecera = 0;
         Entidad entActual;
+        Entidad entActualCla1;
+        Entidad entActualCla2;
+        Entidad entActualCla3;
+        Entidad entActualCla6;
 
         /*Constructor del Form 3*/
         public Form3(string nEnt, List<Atributo> lista, int tam, long cabRegistros, Entidad ent)
@@ -33,33 +32,60 @@ namespace Diccionario_de_datos
             tamRegistro = tam;
             cabecera = cabRegistros;
             entActual = ent;
+            entActualCla1 = ent;
+            entActualCla2 = ent;
+            entActualCla3 = ent;
+            entActualCla6 = ent;
         }
 
         private void Form3_Load(object sender, EventArgs e)
         {
             foreach (Atributo atr in atributos)//Dibuja las herramientas necesarias para capturar la informacion.
             {
-                Label lb = new Label();
-                TextBox tb = new TextBox();
+                if (atr.tipoIndice == 8)
+                {
+                    Label lb = new Label();
+                    ComboBox comboBox = new ComboBox();
+                    comboBox.Enabled = true;
+                    foreach (var item in entActual.lsDatos)
+                    {
+                        comboBox.Items.Add(item);
+                    }
+                    lb.Text = atr.nomAtributo;
+                    lb.Location = p1;
+                    lb.Visible = true;
+                    comboBox.Visible = true;
+                    comboBox.Location = p2;
+                    this.Controls.Add(lb);
+                    this.Controls.Add(comboBox);
+                    p1.Y = p1.Y + 30;
+                    p2.Y = p2.Y + 30;
+                }
+                else
+                {
 
-                lb.Enabled = true;
-                tb.Enabled = true;
+                    Label lb = new Label();
+                    TextBox tb = new TextBox();
 
-                lb.Visible = true;
-                tb.Visible = true;
+                    lb.Enabled = true;
+                    tb.Enabled = true;
 
-                lb.Location = p1;
-                tb.Location = p2;
+                    lb.Visible = true;
+                    tb.Visible = true;
 
-                lb.Text = atr.nomAtributo;
+                    lb.Location = p1;
+                    tb.Location = p2;
 
-                this.Controls.Add(lb);
-                this.Controls.Add(tb);
+                    lb.Text = atr.nomAtributo;
 
-                textBoxes.Add(tb);
+                    this.Controls.Add(lb);
+                    this.Controls.Add(tb);
 
-                p1.Y = p1.Y + 30;
-                p2.Y = p2.Y + 30;
+                    textBoxes.Add(tb);
+
+                    p1.Y = p1.Y + 30;
+                    p2.Y = p2.Y + 30;
+                }
             }
             p1.Y = p1.Y + 20;
             dgvRegistros.Location = p1;
@@ -74,35 +100,66 @@ namespace Diccionario_de_datos
             }
             abreArchivoRegistros();
         }
-        private bool checa() {
+        private bool checa()
+         {
             bool res = false;
-            
+
             //crear una lista de datos para checar repetidos
-           
-                int n = dgvRegistros.Rows.Count;
-            List<string> aux= new List<string>();
+
+            int n = dgvRegistros.Rows.Count;
+            
             List<string> aux2 = new List<string>();
             List<string> aux3 = new List<string>();
 
+            List<List<string>> Listas = new List<List<string>>();
             for (int i = 0; i < n-1; i++)
             {
-                aux2.Add(dgvRegistros.Rows[i].Cells[1].Value.ToString());
-                aux.Add (dgvRegistros.Rows[i].Cells[2].Value.ToString());
-                aux3.Add(dgvRegistros.Rows[i].Cells[3].Value.ToString());
+                List<string> aux = new List<string>();
+                for (int j = 0; j < dgvRegistros.Columns.Count-2; j++)
+                {
+                    aux.Add(dgvRegistros.Rows[i].Cells[j+1].Value.ToString());
+                }
+                Listas.Add(aux);
             }
 
+            /*
+            for (int i = 0; i < n - 1; i++)
+            {
+               
+               
+                //Listas.Add();
+                aux2.Add(dgvRegistros.Rows[i].Cells[1].Value.ToString());
+                aux.Add(dgvRegistros.Rows[i].Cells[2].Value.ToString());
+                aux3.Add(dgvRegistros.Rows[i].Cells[3].Value.ToString());
+            }
+            */
             foreach (TextBox tb in textBoxes)
             {
-                if (aux.Contains(tb.Text.PadRight(29))|| aux2.Contains(tb.Text.PadRight(29))|| aux3.Contains(tb.Text.PadRight(29)))
+                for (int i = 0; i < Listas.Count; i++)
                 {
-                   res = true;
+                    for (int j = 0; j <Listas[i].Count; j++)
+                    {
+                        if (Listas[i].Contains(tb.Text.PadRight(29)))
+                        {
+                            res = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            /*
+            foreach (TextBox tb in textBoxes)
+            {
+                if (aux.Contains(tb.Text.PadRight(29)) || aux2.Contains(tb.Text.PadRight(29)) || aux3.Contains(tb.Text.PadRight(29)))
+                {
+                    res = true;
                     break;
 
                 }
-                
-               
-            }
-                return res;
+
+
+            }*/
+            return res;
         }
         private bool checa2()
         {
@@ -111,6 +168,7 @@ namespace Diccionario_de_datos
             //crear una lista de datos para checar repetidos
 
             int n = dgvRegistros.Rows.Count;
+
             List<string> aux = new List<string>();
             List<string> aux2 = new List<string>();
             List<string> aux3 = new List<string>();
@@ -159,12 +217,14 @@ namespace Diccionario_de_datos
                     //this.Close();
                 }
             }
-            else {
+            else
+            {
                 MessageBox.Show("elemento ya existente");
             }
         }
-        private bool ChecaTamaño() {
-            bool cumple= true;
+        private bool ChecaTamaño()
+        {
+            bool cumple = true;
             int i = 0;
 
             //int n = dgvRegistros.Rows.Add();
@@ -180,7 +240,7 @@ namespace Diccionario_de_datos
                             if (cadena.Length > atributos[i].longDato)
                             {
                                 cumple = false;
-                               
+
                                 break;
                             }
                             else
@@ -189,10 +249,11 @@ namespace Diccionario_de_datos
                                 break;
                             }
                     }
-                    
+
                     i++;
                 }
-                else {
+                else
+                {
                     return cumple;
                 }
             }
@@ -204,13 +265,13 @@ namespace Diccionario_de_datos
         {
             long dirRegistroActual = 0;
             long dirSigReg = 0;
-            
-           
+
+
             BinaryWriter bw;
             FileStream guardar = new FileStream(nombreEntidad + ".dat", FileMode.OpenOrCreate, FileAccess.Write);
             bw = new BinaryWriter(guardar);
 
-            if(guardar.Length == 0)
+            if (guardar.Length == 0)
             {
                 tamArchivoData = 0;
             }
@@ -227,26 +288,29 @@ namespace Diccionario_de_datos
 
             //bw.Write(dirRegistroActual);
             //direcciones.Add(dirRegistroActual);
-            foreach(TextBox tb in textBoxes)
+
+            foreach (TextBox tb in textBoxes)
             {
                 switch (atributos[i].tipoDato)//Agrega el valor nuevo al DGV.
                 {
                     case 'E':
                         int valor = int.Parse(tb.Text);
                         dgvRegistros.Rows[n].Cells[i + 1].Value = valor;
+
                         break;
 
                     case 'C':
                         string cadena = tb.Text.PadRight(atributos[i].longDato - 1);
                         dgvRegistros.Rows[n].Cells[i + 1].Value = cadena;
-                       // MessageBox.Show(cadena.Length.ToString()); validar
+                        // MessageBox.Show(cadena.Length.ToString()); validar
                         break;
                 }
 
-                switch(atributos[i].tipoIndice)//Verifica el tipo de indice a escribir en el archivo .idx
+                switch (atributos[i].tipoIndice)//Verifica el tipo de indice a escribir en el archivo .idx
                 {
                     case 2: //Indice Primario
                         indicePrimarioChido(atributos[i], tb.Text, dirRegistroActual);//tipo de atributo, valor que entra y direccion del registro
+                        //entActual.lsDatos.Add(tb.Text);
                         break;
 
                     case 3: //Indice Secundario
@@ -257,7 +321,7 @@ namespace Diccionario_de_datos
                 i++;
             }
 
-            if(dgvRegistros.Rows.Count > 2)
+            if (dgvRegistros.Rows.Count > 2)
             {
                 dgvRegistros.Rows[n - 1].Cells[i + 1].Value = dirRegistroActual;
             }
@@ -274,10 +338,11 @@ namespace Diccionario_de_datos
             {
                 switch (atr.tipoIndice)
                 {
-                    case 2: //Clave de búsqueda//cambiar caso 
+                    case 1: //Clave de búsqueda//cambiar caso 
                         if (dgvRegistros.Rows.Count > 2)
                             claveDeBusqueda(atr, col);
                         break;
+                    
                 }
                 col++;
             }
@@ -425,7 +490,7 @@ namespace Diccionario_de_datos
             {
                 case 'E':
                     ind = new Indice(atr, nombreEntidad);
-                    if(atr.dirIndice == -1)
+                    if (atr.dirIndice == -1)
                         ind.escribeIndice();
                     ind.guardaDatoEnteroIndicePrimario(int.Parse(valor), direccion);
                     break;
@@ -466,10 +531,11 @@ namespace Diccionario_de_datos
         private void hashDinamico(Atributo atr, string valor, long direccionReg)
         {//Recibe el atributo con indice hash, el valor convertido a binario y la direccion de la informacion en el registro de datos
             Indice ind = new Indice(entActual, atr, nombreEntidad, direccionReg);
-            if(atr.dirIndice == -1)//Si el indice aun no ha sido creado en el archivo
+            if (atr.dirIndice == -1)//Si el indice aun no ha sido creado en el archivo
             {
+
                 ind.creaIndiceHashDinamico();
-                int valorInt = int.Parse(valor);
+                int valorInt = Int32.Parse(valor.ToString());
                 string valorBinario = regresavalorBinario(valorInt);
                 ind.HashDinamico(valorBinario, atributos, entActual);
             }
@@ -528,15 +594,17 @@ namespace Diccionario_de_datos
                 columna++;
                 foreach (Atributo atr in atributos)
                 {
-                    switch(atr.tipoDato)
+                    switch (atr.tipoDato)
                     {
                         case 'E':
                             int valor = (int)dgvRegistros.Rows[i].Cells[columna].Value;
+                            //entActual.lsDatos.Add(valor.ToString());
                             bw.Write(valor);
                             break;
 
                         case 'C':
                             string cadena = (string)dgvRegistros.Rows[i].Cells[columna].Value;
+                            //entActual.lsDatos.Add(cadena);
                             bw.Write(cadena);
                             break;
                     }
@@ -553,6 +621,10 @@ namespace Diccionario_de_datos
         /*Método que abre el archivo .dat*/
         private void abreArchivoRegistros()
         {
+            entActualCla1.lsDatos.Clear();
+            entActualCla2.lsDatos.Clear();
+            entActualCla3.lsDatos.Clear();
+            entActualCla6.lsDatos.Clear();
             if (File.Exists(nombreEntidad + ".dat"))
             {
                 FileStream abre;
@@ -582,12 +654,25 @@ namespace Diccionario_de_datos
                         {
                             case 'E':
                                 int entero = br.ReadInt32();
+
                                 dgvRegistros.Rows[n].Cells[celda].Value = entero;
+                                if (atr.tipoIndice==2)
+                                {
+                                entActual.lsDatos.Add(entero.ToString());
+
+                                }
+
                                 break;
 
                             case 'C':
                                 string cadena = br.ReadString();
                                 dgvRegistros.Rows[n].Cells[celda].Value = cadena.PadRight(atr.longDato - 1);
+                                if (atr.tipoIndice == 2)
+                                {
+                                entActual.lsDatos.Add(cadena.ToString());   
+
+                                }
+
                                 break;
                         }
                         celda++;
@@ -609,12 +694,12 @@ namespace Diccionario_de_datos
             List<int> ordenados = new List<int>();
             List<long> direcciones = new List<long>();
 
-            while(ordenados.Count < listaInt.Count)//Generar lista con los valores ordenados
+            while (ordenados.Count < listaInt.Count)//Generar lista con los valores ordenados
             {
                 int menor = 99999999;
                 foreach (int valor in listaInt)
                 {
-                    if(valor < menor && !(ordenados.Contains(valor)))
+                    if (valor < menor && !(ordenados.Contains(valor)))
                     {
                         menor = valor;
                     }
@@ -639,9 +724,9 @@ namespace Diccionario_de_datos
             int posUltCol = dgvRegistros.ColumnCount - 1;
             foreach (int ord in ordenados)//Pone las direcciones debidamente ordenadas en el DGV
             {
-                for(int i = 0; i < ordenados.Count; i++)
+                for (int i = 0; i < ordenados.Count; i++)
                 {
-                    if(ord == (int)dgvRegistros.Rows[i].Cells[col].Value)
+                    if (ord == (int)dgvRegistros.Rows[i].Cells[col].Value)
                     {
                         if (ord == ordenados[ordenados.Count - 1])
                         {
@@ -650,7 +735,7 @@ namespace Diccionario_de_datos
                         }
                         else
                         {
-                            if(ord == ordenados[0])//Si es el primer dato ordenado, cabecera es igual a la direccion de ese dato
+                            if (ord == ordenados[0])//Si es el primer dato ordenado, cabecera es igual a la direccion de ese dato
                             {
                                 cabecera = (long)dgvRegistros.Rows[i].Cells[0].Value;
                             }
@@ -670,7 +755,7 @@ namespace Diccionario_de_datos
         {
             List<string> ordenados = new List<string>();
             List<long> direcciones = new List<long>();
-            
+
             while (ordenados.Count < listaStr.Count)//Generar lista con los valores ordenados
             {
                 string compara = "ZZZZZZZZZZZZ";
@@ -688,7 +773,7 @@ namespace Diccionario_de_datos
             {
                 for (int pos = 0; pos < ordenados.Count; pos++)
                 {
-                    if(valor == (string)dgvRegistros.Rows[pos].Cells[col].Value)
+                    if (valor == (string)dgvRegistros.Rows[pos].Cells[col].Value)
                     {
                         long dir = (long)dgvRegistros.Rows[pos].Cells[0].Value;
                         direcciones.Add(dir);
@@ -699,7 +784,7 @@ namespace Diccionario_de_datos
 
             int mas = 1;
             int posUltCol = dgvRegistros.ColumnCount - 1;
-            foreach(string ord in ordenados)//Pone las direcciones debidamente ordenadas en el DGV
+            foreach (string ord in ordenados)//Pone las direcciones debidamente ordenadas en el DGV
             {
                 for (int i = 0; i < ordenados.Count; i++)
                 {
@@ -882,11 +967,12 @@ namespace Diccionario_de_datos
                 else
                     MessageBox.Show("No hay registros existentes!!");
             }
-            else {
+            else
+            {
                 MessageBox.Show("dato repetido");
             }
 
-            
+
         }
 
         /*Evento de hacer clic en el boton de eliminar*/
@@ -902,9 +988,9 @@ namespace Diccionario_de_datos
                     Indice ind;
                     switch (atr.tipoIndice)
                     {
-                        
+
                         case 0: //Sin clave de búsqueda
-                            if(res == 0)
+                            if (res == 0)
                             {
                                 int ren = dgvRegistros.CurrentRow.Index;
                                 if (dgvRegistros.CurrentRow.Index != 0)//Cuando el renglon a eliminar no es el primero
@@ -913,8 +999,8 @@ namespace Diccionario_de_datos
                                 }
                                 else//Cuando el renglon a eliminar es el primero, hay que modificar la cabecera de
                                     //la direccion de los registros.
-                                    cabecera = (long)dgvRegistros.Rows[ren + 1].Cells[0].Value;
-                                
+                                    //cabecera = (long)dgvRegistros.Rows[ren + 1].Cells[0].Value;
+                                    continue;
                                 //dgvRegistros.Rows.Remove(dgvRegistros.CurrentRow);//Elimina el renglon del registro en el DGV
                             }
                             break;
@@ -924,19 +1010,19 @@ namespace Diccionario_de_datos
                             if (atr.tipoDato == 'E')
                             {
                                 int valor = (int)dgvRegistros.CurrentRow.Cells[celda].Value;
-                                ind.eliminaIndice(valor);
+                                ind.eliminaIndice(valor,entActual);
                             }
                             else
                             {
                                 string valorStr = (string)dgvRegistros.CurrentRow.Cells[celda].Value;
-                               // ind.eliminaIndice(valorStr);
+                                // ind.eliminaIndice(valorStr);
                             }
                             //dgvRegistros.Rows.Remove(dgvRegistros.CurrentRow);//Elimina el renglon del registro en el DGV
                             break;
 
                         case 3://Indice Secundario
                             ind = new Indice(atr, nombreEntidad);
-                            if(atr.tipoDato == 'E')
+                            if (atr.tipoDato == 'E')
                             {
                                 int valor = (int)dgvRegistros.CurrentRow.Cells[celda].Value;
                                 long dir = (long)dgvRegistros.CurrentRow.Cells[0].Value;
@@ -961,9 +1047,9 @@ namespace Diccionario_de_datos
                 }
 
                 celda = 1;
-                foreach(Atributo atr in atributos)
+                foreach (Atributo atr in atributos)
                 {
-                    if(atr.tipoIndice == 1)
+                    if (atr.tipoIndice == 1)
                     {
                         dgvRegistros.Rows.Remove(dgvRegistros.CurrentRow);//Elimina el renglon del registro en el DGV
                         switch (atr.tipoDato)
@@ -988,19 +1074,34 @@ namespace Diccionario_de_datos
                         res = 1;
                         break;
                     }
-                   celda++;
+                    celda++;
                 }
                 if (res == 0)
                     dgvRegistros.Rows.Remove(dgvRegistros.CurrentRow);
             }
             guardaDGV();
         }
-        
+
         /*Método que regresa la cabecera del registro de datos*/
         public long regresaCabecera()
         {
             return cabecera;
         }
+        public List<string> regresaDatos()
+        {
 
+            return entActual.lsDatos;
+        }
+        private void Form3_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FormBusqueda form = new FormBusqueda(entActualCla1, entActualCla2, entActualCla3, entActualCla6);
+            form.Show();
+        }
     }
 }

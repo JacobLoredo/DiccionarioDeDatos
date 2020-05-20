@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 
 namespace Diccionario_de_datos
 {
@@ -27,7 +25,7 @@ namespace Diccionario_de_datos
 
         public Indice(Entidad ent, Atributo atributo, string nombreEnt, long dirReg)
         {
-            entidadActual = ent; 
+            entidadActual = ent;
             nombreEntidad = nombreEnt;
             atr = atributo;
             dirRegistro = dirReg;
@@ -54,7 +52,7 @@ namespace Diccionario_de_datos
             tamBloque = regresaTamañodelBloque();
             long registros = 1040 / tam;
 
-            if(atr.dirIndice == -1)
+            if (atr.dirIndice == -1)
             {
                 atr.dirIndice = guardar.Length;
 
@@ -99,7 +97,7 @@ namespace Diccionario_de_datos
 
             BinaryReader reader = new BinaryReader(abrir);
             int aux = 0;
-            while(aux != -1)
+            while (aux != -1)
             {
                 valores.Add(reader.ReadInt32());
                 direcciones.Add(reader.ReadInt64());
@@ -112,12 +110,12 @@ namespace Diccionario_de_datos
 
             regActuales = valores.Count;
 
-            if(regActuales == totRegistros)//Cuando se llena el bloque de un indice, aqui tendriamos que crear otro bloque
+            if (regActuales == totRegistros)//Cuando se llena el bloque de un indice, aqui tendriamos que crear otro bloque
             {
 
             }
 
-            if(!valores.Contains(valor)) //Si el valor a agregar no se encuentra en la lista
+            if (!valores.Contains(valor)) //Si el valor a agregar no se encuentra en la lista
             {
                 List<int> nuevoV = new List<int>();
                 List<long> nuevoD = new List<long>();
@@ -321,7 +319,7 @@ namespace Diccionario_de_datos
             BinaryReader reader = new BinaryReader(abrir);
             string aux = "0";
             string menos = "-1";
-            while(aux != menos.PadRight(atr.longDato - 1))
+            while (aux != menos.PadRight(atr.longDato - 1))
             {
                 valores.Add(reader.ReadString());
                 direcciones.Add(reader.ReadInt64());
@@ -332,7 +330,7 @@ namespace Diccionario_de_datos
             abrir.Close();
             regActuales = valores.Count;
 
-            if(!valores.Contains(valor))//Cuando no contiene el valor en la lista
+            if (!valores.Contains(valor))//Cuando no contiene el valor en la lista
             {
                 long direccionCajon = creaCajonesIndiceSecundario();    //Crea los cajones
                 List<string> nuevoV = new List<string>();
@@ -402,7 +400,7 @@ namespace Diccionario_de_datos
             reader = new BinaryReader(abre);
             //reader.BaseStream.Position = dirBloque;
             long res = 0;
-            while(res != -1)
+            while (res != -1)
             {
                 res = reader.ReadInt64();
                 dirValores.Add(res);
@@ -414,7 +412,7 @@ namespace Diccionario_de_datos
             }
             else//Para eliminar un dato en el cajon.
                 dirValores.Remove(valor);
-            
+
             reader.Close();
             abre.Close();
             //bw.Close();
@@ -461,7 +459,7 @@ namespace Diccionario_de_datos
             FileStream guardar = new FileStream(nombreEntidad + ".idx", FileMode.Open, FileAccess.Write);
             bw = new BinaryWriter(guardar);
             bw.Seek((int)atr.dirIndice, SeekOrigin.Begin);
-            for(int i = 0; i < val.Count; i++)
+            for (int i = 0; i < val.Count; i++)
             {
                 bw.Write(val[i]);
                 bw.Write(dir[i]);
@@ -502,15 +500,19 @@ namespace Diccionario_de_datos
                 valores.Add(reader.ReadInt32());
                 direcciones.Add(reader.ReadInt64());
                 aux = valores.Last();
+                if (valores[0]==-1&&direcciones[0]==-1)
+                {
+                   
+                }
             }
             //valores.Remove(-1);
             //direcciones.Remove(-1);
             reader.Close();
             abrir.Close();
 
-            for(int i = 0; i < valores.Count; i++)
+            for (int i = 0; i < valores.Count; i++)
             {
-                if(valores[i] == valor)//Elimina el dato que queremos quitar
+                if (valores[i] == valor)//Elimina el dato que queremos quitar
                 {
                     valores.Remove(valores[i]);
                     direcciones.Remove(direcciones[i]);
@@ -521,7 +523,49 @@ namespace Diccionario_de_datos
             valores.Clear();
             direcciones.Clear();
         }
+        public void eliminaIndice(int valor,Entidad ent)
+        {
+            long direccionIndice = atr.dirIndice;
+            List<int> valores = new List<int>();
+            List<long> direcciones = new List<long>();
 
+            FileStream abrir;
+            abrir = File.Open(nombreEntidad + ".idx", FileMode.Open, FileAccess.Read);
+            abrir.Seek(atr.dirIndice, SeekOrigin.Begin);
+
+            BinaryReader reader = new BinaryReader(abrir);
+            int aux = 0;
+            while (aux != -1)
+            {
+                valores.Add(reader.ReadInt32());
+                direcciones.Add(reader.ReadInt64());
+                aux = valores.Last();
+                if (valores[0] == -1 && direcciones[0] == -1)
+                {
+                    abrir.Seek(ent.dirDatos, SeekOrigin.Begin);
+                    valores.Add(reader.ReadInt32());
+                    direcciones.Add(reader.ReadInt64());
+                    aux = valores.Last();
+                }
+            }
+            //valores.Remove(-1);
+            //direcciones.Remove(-1);
+            reader.Close();
+            abrir.Close();
+
+            for (int i = 0; i < valores.Count; i++)
+            {
+                if (valores[i] == valor)//Elimina el dato que queremos quitar
+                {
+                    valores.Remove(valores[i]);
+                    direcciones.Remove(direcciones[i]);
+                    break;
+                }
+            }
+            escribeDatosidx(valores, direcciones);
+            valores.Clear();
+            direcciones.Clear();
+        }
         /*Método para eliminar un indice  primario de tipo string*/
         public void eliminaIndice(string valor)
         {
@@ -657,7 +701,7 @@ namespace Diccionario_de_datos
             long registros = 1036 / tam;//1048 - debordamiento - indice = 1036
 
             //atr.dirIndice = guardar.Length;
-           
+
             bw.Seek((int)file.Length, SeekOrigin.Begin);
             int i = 0;
             int indice = -1;
@@ -721,11 +765,11 @@ namespace Diccionario_de_datos
             }
             else//----------------------Cuando no es el primero y ya hay cajones creados.---------------------
             {
-                if(indiceTabla == 0)
+                if (indiceTabla == 0)
                 {
                     long direccionCajon = direcciones[0];
                     insercionExitosa = escribeCajonesHash(indiceTabla, direccionCajon, dirRegistro, lsAtr);
-                    if(insercionExitosa == 0)//Cuando ya no se pueden guardar mas registros en los cajones
+                    if (insercionExitosa == 0)//Cuando ya no se pueden guardar mas registros en los cajones
                     {
 
                         indiceTabla++;
@@ -733,9 +777,9 @@ namespace Diccionario_de_datos
                         actualizaIndices(direccionCajon, indiceTabla);//Actualiza el indice del cajon lleno
 
                         direcciones.Add(creaCajonHashDinamico(indiceTabla, lsAtr));//Crea un nuevo cajon
-                        
+
                         escribeHashDinamico(indiceTabla, direcciones);//Guarda la tabla hash
-                        
+
                         List<string> lsBin = new List<string>();
 
                         double nBits = Math.Pow(2, indiceTabla);
@@ -752,7 +796,7 @@ namespace Diccionario_de_datos
                             if (lsBin[i] == valorBinario.Substring(0, indiceTabla))
                             {
                                 insercionExitosa = escribeCajonesHash(indiceTabla, direcciones[i], dirRegistro, lsAtr);
-                                if(insercionExitosa == 0)
+                                if (insercionExitosa == 0)
                                 {
                                     string actual = lsBin[i];
                                     escribeHashDinamico(indiceTabla, direcciones);
@@ -770,7 +814,7 @@ namespace Diccionario_de_datos
 
                                     for (int j = 0; j < nuevoD.Count; j++)
                                     {
-                                        if(nuevasPosiciones[j] == valorBinario.Substring(0, indiceTabla))
+                                        if (nuevasPosiciones[j] == valorBinario.Substring(0, indiceTabla))
                                             escribeCajonesHash(indiceTabla, nuevoD[j], dirRegistro, lsAtr);
                                     }
                                 }
@@ -957,13 +1001,13 @@ namespace Diccionario_de_datos
                 }
             }
             direcciones.Clear();
-            
+
             escribeHashDinamico(indiceTabla, nuevoD);
         }
 
         private List<long> mueveRegistrosInd(int indiceTabla, long direccionCajon, List<Atributo> lsAtr, List<long> direcciones, string numActual, int indCajonHash, List<string> posBin)
         {
-            if(indiceTabla == indCajonHash)
+            if (indiceTabla == indCajonHash)
             {
                 indiceTabla++;
             }
@@ -984,9 +1028,9 @@ namespace Diccionario_de_datos
             List<long> nuevoD = new List<long>();
 
 
-            for(int j = 0; j < nBits; j++)
+            for (int j = 0; j < nBits; j++)
             {
-                if(lsBin[j].Substring(0, indCajonHash -1 ) == numActual && exito == 0)
+                if (lsBin[j].Substring(0, indCajonHash - 1) == numActual && exito == 0)
                 {
                     int pos = posBin.IndexOf(numActual);
                     nuevoD.Add(direcciones[pos]);
@@ -1028,7 +1072,7 @@ namespace Diccionario_de_datos
             guardar.Close();
         }
 
-        
+
         private void actualizaIndices(FileStream guardar, long dirCajon, int ind)
         {
             BinaryWriter bw;
@@ -1054,11 +1098,11 @@ namespace Diccionario_de_datos
             int i;
             int indiceCajon = ind;
             bw.Write(indiceCajon);//Indice entero
-            for(i = 0; i < registros; i++)
+            for (i = 0; i < registros; i++)
             {
-                foreach(Atributo atr in lsAtr)//Registro de datos
+                foreach (Atributo atr in lsAtr)//Registro de datos
                 {
-                    switch(atr.tipoDato)
+                    switch (atr.tipoDato)
                     {
                         case 'E':
                             int menos = -1;
@@ -1090,13 +1134,13 @@ namespace Diccionario_de_datos
             for (int i = 0; i < direcciones.Count; i++)
             {
                 bw.Write(direcciones[i]);
-                if(i == 128)
+                if (i == 128)
                 {
                     BinaryReader reader;
                     reader = new BinaryReader(guardar);
                     long checa = guardar.Position;
                     reader.BaseStream.Position = checa;
-                    if(reader.ReadInt64() == -1)
+                    if (reader.ReadInt64() == -1)
                     {
                         bw.BaseStream.Position = checa;
                         long posSig = creaIndiceHashDinamico(guardar);
@@ -1112,7 +1156,7 @@ namespace Diccionario_de_datos
             }
             //bw.Write(desborda);
             guardar.Close();
-            
+
         }
 
         /*Método que escribe los registros en el archivo idx*/
@@ -1362,7 +1406,7 @@ namespace Diccionario_de_datos
         private int regresaLongituddeAtributos(List<Atributo> lsAtr)
         {
             int longAtributos = 0;
-            foreach(Atributo atr in lsAtr)
+            foreach (Atributo atr in lsAtr)
             {
                 longAtributos += atr.longDato;
             }
@@ -1424,7 +1468,7 @@ namespace Diccionario_de_datos
         }
 
         /*Método que organiza el reacomodo de los registrsos al duplicarse la tabla*/
-        private int reacomodaRegistros(long dirCajonLleno, List<Atributo> atributos, List<string> posicionBinaria, List<long>dirCajones, int indTabla)
+        private int reacomodaRegistros(long dirCajonLleno, List<Atributo> atributos, List<string> posicionBinaria, List<long> dirCajones, int indTabla)
         {
             int exito = 0;
             BinaryReader leer;
@@ -1441,7 +1485,7 @@ namespace Diccionario_de_datos
             //int post = dirCajones.IndexOf();
             long dirActualidx = 0;
 
-            while(contReg != reg)
+            while (contReg != reg)
             {
                 dirActualidx = leer.BaseStream.Position;
                 foreach (Atributo atr in atributos)
@@ -1461,9 +1505,9 @@ namespace Diccionario_de_datos
                                     long act = leer.BaseStream.Position;
                                     //ELIMINARLO DE ESE CAJON Y DESPUES INSERTARLO EN EL NUEVO CAJON
                                     eliminaRegistro(abre, dirActualidx, atributos);
-                                    for(int i = 0; i < posicionBinaria.Count; i++)
+                                    for (int i = 0; i < posicionBinaria.Count; i++)
                                     {
-                                        if(cadenaRecortada == posicionBinaria[i])
+                                        if (cadenaRecortada == posicionBinaria[i])
                                         {
                                             Registro registro = new Registro(atributos, nombreEntidad);
                                             long dirDatos = registro.regresaDirecciondat(valor, entidadActual.dirDatos);
@@ -1499,7 +1543,7 @@ namespace Diccionario_de_datos
             int menos = -1;
             foreach (Atributo atr in lsAtr)
             {
-                switch(atr.tipoDato)
+                switch (atr.tipoDato)
                 {
                     case 'E':
                         bw.Write(menos);
@@ -1551,7 +1595,7 @@ namespace Diccionario_de_datos
             int contReg = 0;
 
             int indiceCajon = leer.ReadInt32();
-            
+
             long dirActualidx = 0;
             int elimina = 0;
             long posicion = 0;

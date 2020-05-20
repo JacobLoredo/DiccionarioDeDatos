@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Diccionario_de_datos
 {
     public class Entidad
     {
         public List<Atributo> lsAtributo = new List<Atributo>();
+        public List<string> lsDatos = new List<string>();
         public string nombre;
         public long dirEnt;
         public long dirAtr;

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace Diccionario_de_datos
@@ -49,7 +45,7 @@ namespace Diccionario_de_datos
                     }
                 }
                 dirSiguiente = reader.ReadInt64();
-                
+
             }
             abre.Close();
             reader.Close();

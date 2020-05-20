@@ -1,47 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
+
 
 namespace Diccionario_de_datos
 {
     public partial class Form2 : Form
     {
-        Entidad entidadSel;
-        string nomArchivo;
-        long tamArchivo;
-        long cabeceraAtr;
-        List<Entidad> Aux = new List<Entidad>();
+
+        public Entidad entidadSel;
+        public string nomArchivo;
+        public long tamArchivo;
+        public long cabeceraAtr;
+        public List<Entidad> Aux = new List<Entidad>();
+        public List<Entidad> Aux2 = new List<Entidad>();
+
         /*Constructor del Form2*/
-        public Form2(Entidad agrega, string archivo, long tam,List<Entidad> ls)
+        public Form2(Entidad agrega, string archivo, long tam, List<Entidad> lsEntidad)
         {
             InitializeComponent();
             entidadSel = agrega;
             nomArchivo = archivo;
             tamArchivo = tam;
-            Aux = ls;
+            Aux = lsEntidad;
         }
-        
+
         private void Form2_Load(object sender, EventArgs e)
         {
             lb_Entidad.Text = entidadSel.nombre;
             leeAtributos();
-            
+
+
         }
 
         /*Método que se encarga de leer los atributos que esten guardados en el archivo*/
         private void leeAtributos()
         {
-            if(entidadSel.DireccionAtributo != -1)
+            if (entidadSel.DireccionAtributo != -1)
             {
+                entidadSel.lsAtributo.Clear();
                 FileStream abrirArchivo;
-                abrirArchivo = File.Open(nomArchivo+".bin", FileMode.Open, FileAccess.Read);
+                abrirArchivo = File.Open(nomArchivo + ".bin", FileMode.Open, FileAccess.Read);
                 abrirArchivo.Seek(entidadSel.DireccionAtributo, SeekOrigin.Begin);
 
                 cabeceraAtr = entidadSel.DireccionAtributo;
@@ -56,7 +56,8 @@ namespace Diccionario_de_datos
                 int tInd = 0;
                 long dirInd = 0;
                 long dirSigAtr = 0;
-                while(aux != -1)
+
+                while (aux != -1)
                 {
                     abrirArchivo.Position = aux;
                     abrirArchivo.Seek(abrirArchivo.Position, SeekOrigin.Begin);
@@ -73,6 +74,7 @@ namespace Diccionario_de_datos
 
                     lee = new Atributo(nom, tipoI, longT, dirA, tInd, dirInd, dirSigAtr);
                     entidadSel.lsAtributo.Add(lee);
+
                     aux = dirSigAtr;
                 }
                 abrirArchivo.Close();
@@ -82,55 +84,129 @@ namespace Diccionario_de_datos
                 //actualizaDGVRegistros();
             }
         }
-        private bool checaAtributoRepetido() {
+        private bool checaAtributoRepetido()
+        {
             bool repetido = false;
 
             foreach (Atributo item in entidadSel.lsAtributo)
             {
-                if (tb_Atributo.Text.PadRight(29) ==item.nomAtributo.ToString())
+                if (tb_Atributo.Text.PadRight(29) == item.nomAtributo.ToString())
                 {
                     repetido = true;
                     break;
                 }
             }
-            
-                
-            return repetido;
-        
-        }
 
+
+            return repetido;
+
+        }
+        public int detectaInd()
+        {
+            int num = -1;
+            for (int i = 0; i < Aux.Count; i++)
+            {
+                if (Aux[i].nombre == comboBox1.Text)
+                {
+                    num = i;
+                    break;
+                }
+
+            }
+            return num;
+        }
+        public int sumaTamAtributos(Entidad entida)
+        {
+            int tamT = 0;
+            for (int i = 0; i < entida.lsAtributo.Count; i++)
+            {
+                tamT += entida.lsAtributo[i].longDato;
+            }
+
+            return tamT;
+        }
         /*Evento que agrega la informacion a un atributio*/
         private void bt_AgregarAtr_Click(object sender, EventArgs e)
         {
             if (!checaAtributoRepetido())
             {
-
-                Atributo atr = new Atributo(tb_Atributo.Text.PadRight(29), Convert.ToChar(cb_TipoDato.Text), int.Parse(tb_LongitudDato.Text), tamArchivo, int.Parse(cb_TipoIndice.Text), -1, -1);
-                entidadSel.agregaAtributo(atr);
-
-                int n = dgvAtributos.Rows.Add();
-                dgvAtributos.Rows[n].Cells[0].Value = atr.nomAtributo;
-                dgvAtributos.Rows[n].Cells[1].Value = atr.tipoDato;
-                dgvAtributos.Rows[n].Cells[2].Value = atr.longDato;
-                dgvAtributos.Rows[n].Cells[3].Value = atr.dirAtributo;
-                dgvAtributos.Rows[n].Cells[4].Value = atr.tipoIndice;
-                dgvAtributos.Rows[n].Cells[5].Value = atr.dirIndice;
-                dgvAtributos.Rows[n].Cells[6].Value = atr.dirSigAtributo;
-                if (n >= 1)//Asigna las direcciones siguiente a la lista
+                if (cb_TipoIndice.Text == "8")
                 {
-                    dgvAtributos.Rows[n - 1].Cells[6].Value = atr.dirAtributo;
+                    if (Aux[detectaInd()].lsDatos.Count > 0)
+                    {
+                        if (Aux[detectaInd()].dirDatos != 0)
+                        {
+
+                            Atributo atr = new Atributo(Aux[detectaInd()].nombre, Convert.ToChar("C"), sumaTamAtributos(Aux[detectaInd()]), tamArchivo, int.Parse(cb_TipoIndice.Text), -1, -1);
+                            entidadSel.agregaAtributo(atr);
+                            int n = dgvAtributos.Rows.Add();
+                            dgvAtributos.Rows[n].Cells[0].Value = Aux[detectaInd()].nombre;
+                            dgvAtributos.Rows[n].Cells[1].Value = atr.tipoDato;
+                            dgvAtributos.Rows[n].Cells[2].Value = atr.longDato;
+                            dgvAtributos.Rows[n].Cells[3].Value = atr.dirAtributo;
+                            dgvAtributos.Rows[n].Cells[4].Value = atr.tipoIndice;
+                            dgvAtributos.Rows[n].Cells[5].Value = Aux[detectaInd()].dirAtr;
+                            dgvAtributos.Rows[n].Cells[6].Value = atr.dirSigAtributo;
+                            if (n >= 1)//Asigna las direcciones siguiente a la lista
+                            {
+                                dgvAtributos.Rows[n - 1].Cells[6].Value = atr.dirAtributo;
+                            }
+                            escribeAtributo();
+
+                            actualizaDGVAtr();
+
+                            tb_Atributo.Text = "";
+                            tb_LongitudDato.Text = "";
+                            cb_TipoDato.Text = "";
+                            cb_TipoIndice.Text = "";
+                        }
+                        else
+                        {
+                            MessageBox.Show("La entidad seleccionado no contiene datos");
+                        }
+                    }
+                    else
+                    {
+                        tb_Atributo.Text = "";
+                        tb_LongitudDato.Text = "";
+                        cb_TipoDato.Text = "";
+                        cb_TipoIndice.Text = "";
+                        comboBox1.Enabled = false;
+                        comboBox1.Items.Clear();
+                        MessageBox.Show("El atributo seleccionado no contiene Datos");
+                    }
                 }
-                escribeAtributo();
+                else
+                {
 
-                actualizaDGVAtr();
+                    Atributo atr = new Atributo(tb_Atributo.Text.PadRight(29), Convert.ToChar(cb_TipoDato.Text), int.Parse(tb_LongitudDato.Text), tamArchivo, int.Parse(cb_TipoIndice.Text), -1, -1);
+                    entidadSel.agregaAtributo(atr);
 
-                tb_Atributo.Text = "";
-                tb_LongitudDato.Text = "";
-                cb_TipoDato.Text = "";
-                cb_TipoIndice.Text = "";
-                // bt_InsertaRegistro.Visible = false;
+                    int n = dgvAtributos.Rows.Add();
+                    dgvAtributos.Rows[n].Cells[0].Value = atr.nomAtributo;
+                    dgvAtributos.Rows[n].Cells[1].Value = atr.tipoDato;
+                    dgvAtributos.Rows[n].Cells[2].Value = atr.longDato;
+                    dgvAtributos.Rows[n].Cells[3].Value = atr.dirAtributo;
+                    dgvAtributos.Rows[n].Cells[4].Value = atr.tipoIndice;
+                    dgvAtributos.Rows[n].Cells[5].Value = atr.dirIndice;
+                    dgvAtributos.Rows[n].Cells[6].Value = atr.dirSigAtributo;
+                    if (n >= 1)//Asigna las direcciones siguiente a la lista
+                    {
+                        dgvAtributos.Rows[n - 1].Cells[6].Value = atr.dirAtributo;
+                    }
+                    escribeAtributo();
+
+                    actualizaDGVAtr();
+
+                    tb_Atributo.Text = "";
+                    tb_LongitudDato.Text = "";
+                    cb_TipoDato.Text = "";
+                    cb_TipoIndice.Text = "";
+                    // bt_InsertaRegistro.Visible = false;
+                }
             }
-            else {
+            else
+            {
                 MessageBox.Show("EL ATRIBUTO YA EXISTE ");
             }
         }
@@ -152,7 +228,7 @@ namespace Diccionario_de_datos
 
             long aux;
             int i = 0;
-            foreach(Atributo atr in entidadSel.lsAtributo)
+            foreach (Atributo atr in entidadSel.lsAtributo)
             {
                 aux = atr.dirAtributo;
                 bw.Seek((int)aux, SeekOrigin.Begin);
@@ -164,6 +240,7 @@ namespace Diccionario_de_datos
                 bw.Write(atr.dirIndice);
                 atr.dirSigAtributo = (long)dgvAtributos.Rows[i].Cells[6].Value;
                 bw.Write(atr.dirSigAtributo);
+
                 i++;
             }
             tamArchivo = guardar.Length;
@@ -175,7 +252,7 @@ namespace Diccionario_de_datos
         {
             dgvAtributos.Rows.Clear();
 
-            foreach(Atributo atr in entidadSel.lsAtributo)
+            foreach (Atributo atr in entidadSel.lsAtributo)
             {
                 int n = dgvAtributos.Rows.Add();
 
@@ -195,28 +272,27 @@ namespace Diccionario_de_datos
             string compara = (string)dgvAtributos.CurrentRow.Cells[0].Value;
             if (!checaAtributoRepetido())
             {
-
-            foreach(Atributo atr in entidadSel.lsAtributo)
-            {
-                if(String.Compare(compara.PadRight(0), atr.nomAtributo) == 0)
+                foreach (Atributo atr in entidadSel.lsAtributo)
                 {
-                    if(tb_Atributo.Text.Length != 0)
-                        atr.nomAtributo = tb_Atributo.Text.PadRight(29);
-                    if(cb_TipoDato.Text.Length != 0)
-                        atr.tipoDato = Convert.ToChar(cb_TipoDato.Text);
-                    if (tb_LongitudDato.Text.Length != 0)
-                        atr.longDato = int.Parse(tb_LongitudDato.Text);
-                    if (cb_TipoIndice.Text.Length != 0)
-                        atr.tipoIndice = int.Parse(cb_TipoIndice.Text);
-                    break;
+                    if (String.Compare(compara.PadRight(0), atr.nomAtributo) == 0)
+                    {
+                        if (tb_Atributo.Text.Length != 0)
+                            atr.nomAtributo = tb_Atributo.Text.PadRight(29);
+                        if (cb_TipoDato.Text.Length != 0)
+                            atr.tipoDato = Convert.ToChar(cb_TipoDato.Text);
+                        if (tb_LongitudDato.Text.Length != 0)
+                            atr.longDato = int.Parse(tb_LongitudDato.Text);
+                        if (cb_TipoIndice.Text.Length != 0)
+                            atr.tipoIndice = int.Parse(cb_TipoIndice.Text);
+                        break;
+                    }
                 }
-            }
-            escribeAtributo();
-            actualizaDGVAtr();
-            tb_Atributo.Text = "";
-            cb_TipoDato.Text = "";
-            tb_LongitudDato.Text = "";
-            cb_TipoIndice.Text = "";
+                escribeAtributo();
+                actualizaDGVAtr();
+                tb_Atributo.Text = "";
+                cb_TipoDato.Text = "";
+                tb_LongitudDato.Text = "";
+                cb_TipoIndice.Text = "";
             }
             else
             {
@@ -251,7 +327,9 @@ namespace Diccionario_de_datos
             }
             actualizaDGVAtr();
         }
-
+        public List<string> regresaDatos() {
+            return entidadSel.lsDatos;
+        }
         /*Evento de insertar un nuevo registro de información*/
         private void bt_InsertaRegistro_Click(object sender, EventArgs e)
         {
@@ -259,6 +337,13 @@ namespace Diccionario_de_datos
             Form3 f3 = new Form3(entidadSel.nombre, entidadSel.lsAtributo, t, entidadSel.dirDatos, entidadSel);
             f3.ShowDialog();
             entidadSel.dirDatos = f3.regresaCabecera();
+
+            if (f3.regresaDatos().Count > 0)
+            {
+
+                entidadSel.lsDatos = f3.regresaDatos();
+
+            }
             actualizaDGVAtr();
             escribeAtributo();
         }
@@ -266,8 +351,9 @@ namespace Diccionario_de_datos
         /*Evento de cerrar la ventana*/
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(true)
+            if (true)
             {
+                Aux.Clear();
                 entidadSel.lsAtributo.Clear();
             }
         }
@@ -276,7 +362,7 @@ namespace Diccionario_de_datos
         private int tamañoDeRegistro()
         {
             int tamRegistro = 0;
-            foreach(Atributo atr in entidadSel.lsAtributo)
+            foreach (Atributo atr in entidadSel.lsAtributo)
             {
                 tamRegistro += atr.longDato;
             }
@@ -295,13 +381,28 @@ namespace Diccionario_de_datos
                     Form4 f4 = new Form4(entidadSel.nombre, atr);
                     f4.ShowDialog();
                 }
-                if(String.Compare(compara.PadRight(29), atr.nomAtributo) == 0 && atr.tipoIndice == 6)//Hash Dinámico
+                if (String.Compare(compara.PadRight(29), atr.nomAtributo) == 0 && atr.tipoIndice == 6)//Hash Dinámico
                 {
                     Form4 f4 = new Form4(entidadSel.nombre, entidadSel.lsAtributo, atr);
                     f4.ShowDialog();
                 }
             }
         }
+
+        internal void ActualizaAtributos(ref List<Entidad> lsEntidadAux, Entidad ent)
+        {
+            for (int i = 0; i < Aux.Count; i++)
+            {
+                if (Aux[i].nombre == entidadSel.nombre)
+                {
+                    Aux[i].lsAtributo = entidadSel.lsAtributo;
+                    break;
+                }
+            }
+            entidadSel.lsAtributo.Clear();
+
+        }
+
 
         private void Cb_TipoDato_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -319,31 +420,33 @@ namespace Diccionario_de_datos
 
         private void button2_Click(object sender, EventArgs e)
         {
-            bt_VerIndices_Click(sender,e);
+            bt_VerIndices_Click(sender, e);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             bt_VerIndices_Click(sender, e);
-            
+
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-           
+
         }
 
         private void cb_TipoIndice_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cb_TipoIndice.SelectedIndex == 3)
+            if (cb_TipoIndice.Text == "8")
             {
                 comboBox1.Enabled = true;
                 for (int i = 0; i < Aux.Count; i++)
                 {
-                    comboBox1.Items.Add(Aux[i].nombre.ToString());
-                }
-                
+                    if (Aux[i].nombre != entidadSel.nombre && File.Exists(Aux[i].nombre + ".dat"))
+                    {
+                        comboBox1.Items.Add(Aux[i].nombre.ToString());
 
+                    }
+                }
             }
             else
             {

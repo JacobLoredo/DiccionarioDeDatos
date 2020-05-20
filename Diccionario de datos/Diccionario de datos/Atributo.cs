@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Diccionario_de_datos
 {
@@ -33,7 +29,7 @@ namespace Diccionario_de_datos
         /*Método que crea la lista de registros de este atributo*/
         public void creaLista(string texto)
         {
-            if(listaInt.Count == 0 && listaChar.Count == 0)
+            if (listaInt.Count == 0 && listaChar.Count == 0)
             {
                 switch (this.tipoDato)
                 {
@@ -52,7 +48,7 @@ namespace Diccionario_de_datos
         /*Método que agrega la lista de registros de este atributo*/
         public void agregaAListaRegistro(string texto)
         {
-            switch(this.tipoDato)
+            switch (this.tipoDato)
             {
                 case 'E':
                     listaInt.Add(int.Parse(texto));
@@ -62,6 +58,7 @@ namespace Diccionario_de_datos
                     listaChar.Add(texto.PadRight(this.longDato - 1));
                     break;
             }
+
         }
     }
 }
