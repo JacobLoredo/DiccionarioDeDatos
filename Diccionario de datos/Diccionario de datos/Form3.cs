@@ -108,8 +108,7 @@ namespace Diccionario_de_datos
 
             int n = dgvRegistros.Rows.Count;
             
-            List<string> aux2 = new List<string>();
-            List<string> aux3 = new List<string>();
+           
 
             List<List<string>> Listas = new List<List<string>>();
             for (int i = 0; i < n-1; i++)
@@ -122,17 +121,7 @@ namespace Diccionario_de_datos
                 Listas.Add(aux);
             }
 
-            /*
-            for (int i = 0; i < n - 1; i++)
-            {
-               
-               
-                //Listas.Add();
-                aux2.Add(dgvRegistros.Rows[i].Cells[1].Value.ToString());
-                aux.Add(dgvRegistros.Rows[i].Cells[2].Value.ToString());
-                aux3.Add(dgvRegistros.Rows[i].Cells[3].Value.ToString());
-            }
-            */
+           
             foreach (TextBox tb in textBoxes)
             {
                 for (int i = 0; i < Listas.Count; i++)
@@ -147,18 +136,7 @@ namespace Diccionario_de_datos
                     }
                 }
             }
-            /*
-            foreach (TextBox tb in textBoxes)
-            {
-                if (aux.Contains(tb.Text.PadRight(29)) || aux2.Contains(tb.Text.PadRight(29)) || aux3.Contains(tb.Text.PadRight(29)))
-                {
-                    res = true;
-                    break;
-
-                }
-
-
-            }*/
+          
             return res;
         }
         private bool checa2()
@@ -1100,7 +1078,7 @@ namespace Diccionario_de_datos
 
         private void button1_Click(object sender, EventArgs e)
         {
-            FormBusqueda form = new FormBusqueda(entActualCla1, entActualCla2, entActualCla3, entActualCla6);
+            FormBusqueda form = new FormBusqueda(atributos, dgvRegistros);
             form.Show();
         }
     }
