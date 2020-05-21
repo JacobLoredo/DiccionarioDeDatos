@@ -103,11 +103,11 @@ namespace Diccionario_de_datos
         private bool checa()
          {
             bool res = false;
-
+            
             //crear una lista de datos para checar repetidos
 
             int n = dgvRegistros.Rows.Count;
-            
+
            
 
             List<List<string>> Listas = new List<List<string>>();
@@ -120,15 +120,23 @@ namespace Diccionario_de_datos
                 }
                 Listas.Add(aux);
             }
-
-           
+            int indece2 = 0;
+            for (int i = 0; i < atributos.Count; i++)
+            {
+                if (atributos[i].tipoIndice == 2)
+                {
+                    indece2=i;
+                }
+            }
+                
+            
             foreach (TextBox tb in textBoxes)
             {
                 for (int i = 0; i < Listas.Count; i++)
                 {
                     for (int j = 0; j <Listas[i].Count; j++)
                     {
-                        if (Listas[i].Contains(tb.Text.PadRight(29)))
+                        if (dgvRegistros.Rows[i].Cells[indece2 + 1].Value.ToString()==tb.Text.ToString())
                         {
                             res = true;
                             break;

@@ -66,8 +66,7 @@ namespace Diccionario_de_datos
                         MessageBox.Show("La entidad no existe");
                         dataGridView1.Rows.Clear();
                     }
-                }
-
+                }                  
             }
             else
             {
@@ -76,6 +75,7 @@ namespace Diccionario_de_datos
         }
         public void BuscaDato() {
             bool encotr = false;
+            string encostrados = "";
             for (int i = 0; i < DATOS.Columns.Count - 2; i++)
             {
                 string aux = comboBox1.Text.Substring(4, atribu[i].nomAtributo.Length);
@@ -84,7 +84,7 @@ namespace Diccionario_de_datos
                 {
                     for (int j = 0; j < DATOS.Rows.Count - 1; j++)
                     {
-                        if (indice!="1")
+                        if (indice!="1 ")
                         {
                             if (DATOS.Rows[j].Cells[i + 1].Value.ToString().Replace(" ", "") == textBox1.Text.ToString())
                             {
@@ -98,10 +98,8 @@ namespace Diccionario_de_datos
                         {
                             if (DATOS.Rows[j].Cells[i + 1].Value.ToString().Replace(" ", "") == textBox1.Text.ToString())
                             {
-                                string encostrados="";
-                                encotr = true;
-                                //MessageBox.Show(DATOS.Rows[j].Cells[i + 1].Value.ToString());
                                 
+                                encotr = true;
                                encostrados += imprimeInfoDato(DATOS.Rows[j])+"\n";
                             }
                         }
