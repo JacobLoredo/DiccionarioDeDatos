@@ -500,9 +500,9 @@ namespace Diccionario_de_datos
                 valores.Add(reader.ReadInt32());
                 direcciones.Add(reader.ReadInt64());
                 aux = valores.Last();
-                if (valores[0]==-1&&direcciones[0]==-1)
+                if (valores[0] == -1 && direcciones[0] == -1)
                 {
-                   
+
                 }
             }
             //valores.Remove(-1);
@@ -523,7 +523,7 @@ namespace Diccionario_de_datos
             valores.Clear();
             direcciones.Clear();
         }
-        public void eliminaIndice(int valor,Entidad ent)
+        public void eliminaIndice(int valor, Entidad ent)
         {
             long direccionIndice = atr.dirIndice;
             List<int> valores = new List<int>();
@@ -1175,7 +1175,7 @@ namespace Diccionario_de_datos
             int avanza = regresaLongituddeAtributos(lsAtr);
             //int regTotal = 1036 / avanza;
 
-            int regTotal = 3;
+            int regTotal = 2;
 
             if (lsAtr[0].tipoDato == 'E')//El primer atributo en la lista de atributos.
             {
@@ -1304,7 +1304,7 @@ namespace Diccionario_de_datos
 
             int avanza = regresaLongituddeAtributos(lsAtr);
             //int regTotal = 1036 / avanza;
-            int regTotal = 3;
+            int regTotal = 2;
 
             if (lsAtr[0].tipoDato == 'E')//El primer atributo en la lista de atributos.
             {
@@ -1478,7 +1478,7 @@ namespace Diccionario_de_datos
 
             //int reg = 1036 / regresaLongituddeAtributos(atributos);
             int contReg = 0;
-            int reg = 3;
+            int reg = 2;
             int indiceCajon = leer.ReadInt32();
 
             int posTabla = dirCajones.IndexOf(dirCajonLleno);

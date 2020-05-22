@@ -16,6 +16,11 @@ namespace Diccionario_de_datos
         public List<Entidad> Aux = new List<Entidad>();
         public List<Entidad> Aux2 = new List<Entidad>();
 
+        public List<CajonHash> CajonesHash = new List<CajonHash>();
+        public List<long> CajPrinHach = new List<long>();
+        public List<int> vs = new List<int>();
+        public List<long> vs2 = new List<long>();
+        FileStream fileidx;
         /*Constructor del Form2*/
         public Form2(Entidad agrega, string archivo, long tam, List<Entidad> lsEntidad)
         {
@@ -453,5 +458,110 @@ namespace Diccionario_de_datos
                 comboBox1.Enabled = false;
             }
         }
+        public void creaCajonHASHpRINCIPAL()
+        {
+            long poscajon = 56;
+
+            for (int i = 0; i < 7; i++)
+            {
+                CajonHash aux = new CajonHash();
+                aux.dircajon = poscajon;
+                CajonesHash.Add(aux);
+
+                CajPrinHach.Add(poscajon);
+                poscajon += 1040;
+
+            }
+        }
+        private void abreArchivoRegistros()
+        {
+            int tam2 = entidadSel.ToString().Length;
+            string vv = entidadSel.nombre.ToString().Replace(" ", "");
+            if (File.Exists(entidadSel.nombre + ".dat"))
+            {
+                FileStream abre;
+                abre = File.Open(entidadSel.nombre + ".dat", FileMode.Open);
+                BinaryReader br = new BinaryReader(abre);
+                long dirSiguiente = 0;
+                long posicion = entidadSel.dirDatos;
+                long tam = abre.Length;
+                abre.Seek(posicion, SeekOrigin.Begin);
+
+                while (dirSiguiente != -1)
+                //while (abre.Position != tam)
+                {
+
+                    //abre.Seek(abre.Position, SeekOrigin.Begin);
+                    abre.Seek(posicion, SeekOrigin.Begin);
+                    //long dir = br.ReadInt64();
+
+                    posicion = br.ReadInt64();
+
+
+                    foreach (Atributo atr in entidadSel.lsAtributo)
+                    {
+                        switch (atr.tipoDato)
+                        {
+                            case 'E':
+                                int entero = br.ReadInt32();
+                                if (atr.tipoIndice == 6)
+                                {
+                                    vs.Add(entero);
+                                    vs2.Add(posicion);
+                                }
+
+                                break;
+
+                            case 'C':
+                                string cadena = br.ReadString();
+
+
+                                break;
+                        }
+
+                    }
+                    dirSiguiente = br.ReadInt64();
+
+                    posicion = dirSiguiente;
+
+                }
+
+                abre.Close();
+            }
+        }
+        private void cargaIDXHash()
+        {
+            fileidx = File.Open(entidadSel.nombre + ".idxs", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            BinaryReader bridx = new BinaryReader(fileidx);
+
+            fileidx.Close();
+
+        }
+        private void hashEsbtn_Click(object sender, EventArgs e)
+        {
+            CajPrinHach.Clear();
+            CajonesHash.Clear();
+            vs.Clear();
+            vs2.Clear();
+            creaCajonHASHpRINCIPAL();
+            abreArchivoRegistros();
+
+            for (int i = 0; i < vs.Count; i++)
+            {
+                DatoCajonHash auxcaj = new DatoCajonHash();
+                auxcaj.valint = vs[i];
+                auxcaj.dir = vs2[i];
+
+                int div = auxcaj.valint / 7;
+                int mult = div * 7;
+                int res = auxcaj.valint - mult;
+
+                CajonesHash[res].Cajon.Add(auxcaj);
+            }
+            cargaIDXHash();
+            FormaHash frm = new FormaHash(CajPrinHach, CajonesHash, fileidx.Name);
+            frm.Show();
+        }
     }
 }
+

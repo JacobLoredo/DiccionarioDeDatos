@@ -101,22 +101,22 @@ namespace Diccionario_de_datos
             abreArchivoRegistros();
         }
         private bool checa()
-         {
+        {
             bool res = false;
-            
+
             //crear una lista de datos para checar repetidos
 
             int n = dgvRegistros.Rows.Count;
 
-           
+
 
             List<List<string>> Listas = new List<List<string>>();
-            for (int i = 0; i < n-1; i++)
+            for (int i = 0; i < n - 1; i++)
             {
                 List<string> aux = new List<string>();
-                for (int j = 0; j < dgvRegistros.Columns.Count-2; j++)
+                for (int j = 0; j < dgvRegistros.Columns.Count - 2; j++)
                 {
-                    aux.Add(dgvRegistros.Rows[i].Cells[j+1].Value.ToString());
+                    aux.Add(dgvRegistros.Rows[i].Cells[j + 1].Value.ToString());
                 }
                 Listas.Add(aux);
             }
@@ -125,18 +125,18 @@ namespace Diccionario_de_datos
             {
                 if (atributos[i].tipoIndice == 2)
                 {
-                    indece2=i;
+                    indece2 = i;
                 }
             }
-                
-            
+
+
             foreach (TextBox tb in textBoxes)
             {
                 for (int i = 0; i < Listas.Count; i++)
                 {
-                    for (int j = 0; j <Listas[i].Count; j++)
+                    for (int j = 0; j < Listas[i].Count; j++)
                     {
-                        if (dgvRegistros.Rows[i].Cells[indece2 + 1].Value.ToString()==tb.Text.ToString())
+                        if (dgvRegistros.Rows[i].Cells[indece2 + 1].Value.ToString() == tb.Text.ToString())
                         {
                             res = true;
                             break;
@@ -144,7 +144,7 @@ namespace Diccionario_de_datos
                     }
                 }
             }
-          
+
             return res;
         }
         private bool checa2()
@@ -328,7 +328,7 @@ namespace Diccionario_de_datos
                         if (dgvRegistros.Rows.Count > 2)
                             claveDeBusqueda(atr, col);
                         break;
-                    
+
                 }
                 col++;
             }
@@ -642,9 +642,9 @@ namespace Diccionario_de_datos
                                 int entero = br.ReadInt32();
 
                                 dgvRegistros.Rows[n].Cells[celda].Value = entero;
-                                if (atr.tipoIndice==2)
+                                if (atr.tipoIndice == 2)
                                 {
-                                entActual.lsDatos.Add(entero.ToString());
+                                    entActual.lsDatos.Add(entero.ToString());
 
                                 }
 
@@ -655,7 +655,7 @@ namespace Diccionario_de_datos
                                 dgvRegistros.Rows[n].Cells[celda].Value = cadena.PadRight(atr.longDato - 1);
                                 if (atr.tipoIndice == 2)
                                 {
-                                entActual.lsDatos.Add(cadena.ToString());   
+                                    entActual.lsDatos.Add(cadena.ToString());
 
                                 }
 
@@ -996,7 +996,7 @@ namespace Diccionario_de_datos
                             if (atr.tipoDato == 'E')
                             {
                                 int valor = (int)dgvRegistros.CurrentRow.Cells[celda].Value;
-                                ind.eliminaIndice(valor,entActual);
+                                ind.eliminaIndice(valor, entActual);
                             }
                             else
                             {
