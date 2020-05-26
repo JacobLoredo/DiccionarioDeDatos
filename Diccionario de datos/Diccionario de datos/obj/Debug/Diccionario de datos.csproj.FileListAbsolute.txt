@@ -24,3 +24,4 @@ C:\Users\yeico\Documents\GitHub\DiccionarioDeDatos\Diccionario de datos\Dicciona
 C:\Users\yeico\Documents\GitHub\DiccionarioDeDatos\Diccionario de datos\Diccionario de datos\obj\Debug\Diccionario de datos.pdb
 C:\Users\yeico\Documents\GitHub\DiccionarioDeDatos\Diccionario de datos\Diccionario de datos\obj\Debug\Diccionario de datos.csproj.CoreCompileInputs.cache
 C:\Users\yeico\Documents\GitHub\DiccionarioDeDatos\Diccionario de datos\Diccionario de datos\obj\Debug\Diccionario_de_datos.FormBusqueda.resources
+C:\Users\yeico\Documents\GitHub\DiccionarioDeDatos\Diccionario de datos\Diccionario de datos\obj\Debug\Diccionario_de_datos.FormaHash.resources

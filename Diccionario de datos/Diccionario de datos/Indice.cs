@@ -523,7 +523,7 @@ namespace Diccionario_de_datos
             valores.Clear();
             direcciones.Clear();
         }
-        public void eliminaIndice(int valor, Entidad ent)
+        public void eliminaIndice(int valor, ref Entidad ent)
         {
             long direccionIndice = atr.dirIndice;
             List<int> valores = new List<int>();
@@ -543,9 +543,15 @@ namespace Diccionario_de_datos
                 if (valores[0] == -1 && direcciones[0] == -1)
                 {
                     abrir.Seek(ent.dirDatos, SeekOrigin.Begin);
+                    int a = reader.ReadInt16();
                     valores.Add(reader.ReadInt32());
                     direcciones.Add(reader.ReadInt64());
                     aux = valores.Last();
+                    ent.dirDatos = -1;
+
+                    valores.Add(Convert.ToInt32(ent.lsDatos[0]));
+                    direcciones.Add(Convert.ToInt32(ent.dirDatos));
+                    cabecera = 0;
                 }
             }
             //valores.Remove(-1);
@@ -555,6 +561,7 @@ namespace Diccionario_de_datos
 
             for (int i = 0; i < valores.Count; i++)
             {
+
                 if (valores[i] == valor)//Elimina el dato que queremos quitar
                 {
                     valores.Remove(valores[i]);
@@ -565,6 +572,10 @@ namespace Diccionario_de_datos
             escribeDatosidx(valores, direcciones);
             valores.Clear();
             direcciones.Clear();
+        }
+        public long regresaCabe()
+        {
+            return cabecera;
         }
         /*Método para eliminar un indice  primario de tipo string*/
         public void eliminaIndice(string valor)
@@ -674,7 +685,7 @@ namespace Diccionario_de_datos
             tam = 8;
             long registros = 1036 / tam;//1048 - debordamiento - indice = 1036
 
-            atr.dirIndice = guardar.Length;
+            atr.dirIndice = 0;
             bw.Seek((int)atr.dirIndice, SeekOrigin.Begin);
             int i = 0;
             int indice = -1;

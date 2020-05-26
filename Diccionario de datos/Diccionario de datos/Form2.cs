@@ -15,12 +15,16 @@ namespace Diccionario_de_datos
         public long cabeceraAtr;
         public List<Entidad> Aux = new List<Entidad>();
         public List<Entidad> Aux2 = new List<Entidad>();
-
         public List<CajonHash> CajonesHash = new List<CajonHash>();
+        public List<CajonHash> CajonesHashAUX = new List<CajonHash>();
+
         public List<long> CajPrinHach = new List<long>();
+        public List<long> CajPrinHachAUX = new List<long>();
+        public List<long> CajPrinHachAUX2 = new List<long>();
         public List<int> vs = new List<int>();
         public List<long> vs2 = new List<long>();
         FileStream fileidx;
+
         /*Constructor del Form2*/
         public Form2(Entidad agrega, string archivo, long tam, List<Entidad> lsEntidad)
         {
@@ -100,7 +104,14 @@ namespace Diccionario_de_datos
                     repetido = true;
                     break;
                 }
+                if (cb_TipoIndice.Text == "2" && item.tipoIndice == 2)
+                {
+                    repetido = true;
+                    MessageBox.Show("Ya existe un atributo con clave 2 ");
+                    break;
+                }
             }
+
 
 
             return repetido;
@@ -111,12 +122,24 @@ namespace Diccionario_de_datos
             int num = -1;
             for (int i = 0; i < Aux.Count; i++)
             {
-                if (Aux[i].nombre == comboBox1.Text)
+                if (cb_TipoIndice.Text == "8")
                 {
-                    num = i;
-                    break;
+                    if (Aux[i].nombre == comboBox1.Text)
+                    {
+                        num = i;
+                        break;
+                    }
                 }
+                else
+                {
 
+                    if (Aux[i].nombre == entidadSel.nombre)
+                    {
+                        num = i;
+                        break;
+                    }
+
+                }
             }
             return num;
         }
@@ -137,38 +160,35 @@ namespace Diccionario_de_datos
             {
                 if (cb_TipoIndice.Text == "8")
                 {
+                    // abreArchivoRegistros();
+                    int r = detectaInd();
                     if (Aux[detectaInd()].lsDatos.Count > 0)
                     {
-                        if (Aux[detectaInd()].dirDatos != 0)
+
+
+                        Atributo atr = new Atributo(Aux[detectaInd()].nombre, Convert.ToChar("E"), sumaTamAtributos(Aux[detectaInd()]), tamArchivo, int.Parse(cb_TipoIndice.Text), -1, -1);
+                        entidadSel.agregaAtributo(atr);
+                        int n = dgvAtributos.Rows.Add();
+                        dgvAtributos.Rows[n].Cells[0].Value = Aux[detectaInd()].nombre;
+                        dgvAtributos.Rows[n].Cells[1].Value = atr.tipoDato;
+                        dgvAtributos.Rows[n].Cells[2].Value = atr.longDato;
+                        dgvAtributos.Rows[n].Cells[3].Value = atr.dirAtributo;
+                        dgvAtributos.Rows[n].Cells[4].Value = atr.tipoIndice;
+                        dgvAtributos.Rows[n].Cells[5].Value = Aux[detectaInd()].dirAtr;
+                        dgvAtributos.Rows[n].Cells[6].Value = atr.dirSigAtributo;
+                        if (n >= 1)//Asigna las direcciones siguiente a la lista
                         {
-
-                            Atributo atr = new Atributo(Aux[detectaInd()].nombre, Convert.ToChar("C"), sumaTamAtributos(Aux[detectaInd()]), tamArchivo, int.Parse(cb_TipoIndice.Text), -1, -1);
-                            entidadSel.agregaAtributo(atr);
-                            int n = dgvAtributos.Rows.Add();
-                            dgvAtributos.Rows[n].Cells[0].Value = Aux[detectaInd()].nombre;
-                            dgvAtributos.Rows[n].Cells[1].Value = atr.tipoDato;
-                            dgvAtributos.Rows[n].Cells[2].Value = atr.longDato;
-                            dgvAtributos.Rows[n].Cells[3].Value = atr.dirAtributo;
-                            dgvAtributos.Rows[n].Cells[4].Value = atr.tipoIndice;
-                            dgvAtributos.Rows[n].Cells[5].Value = Aux[detectaInd()].dirAtr;
-                            dgvAtributos.Rows[n].Cells[6].Value = atr.dirSigAtributo;
-                            if (n >= 1)//Asigna las direcciones siguiente a la lista
-                            {
-                                dgvAtributos.Rows[n - 1].Cells[6].Value = atr.dirAtributo;
-                            }
-                            escribeAtributo();
-
-                            actualizaDGVAtr();
-
-                            tb_Atributo.Text = "";
-                            tb_LongitudDato.Text = "";
-                            cb_TipoDato.Text = "";
-                            cb_TipoIndice.Text = "";
+                            dgvAtributos.Rows[n - 1].Cells[6].Value = atr.dirAtributo;
                         }
-                        else
-                        {
-                            MessageBox.Show("La entidad seleccionado no contiene datos");
-                        }
+                        escribeAtributo();
+
+                        actualizaDGVAtr();
+
+                        tb_Atributo.Text = "";
+                        tb_LongitudDato.Text = "";
+                        cb_TipoDato.Text = "";
+                        cb_TipoIndice.Text = "";
+
                     }
                     else
                     {
@@ -178,7 +198,7 @@ namespace Diccionario_de_datos
                         cb_TipoIndice.Text = "";
                         comboBox1.Enabled = false;
                         comboBox1.Items.Clear();
-                        MessageBox.Show("El atributo seleccionado no contiene Datos");
+                        MessageBox.Show("La entidad seleccionado no contiene Datos");
                     }
                 }
                 else
@@ -268,6 +288,10 @@ namespace Diccionario_de_datos
                 dgvAtributos.Rows[n].Cells[4].Value = atr.tipoIndice;
                 dgvAtributos.Rows[n].Cells[5].Value = atr.dirIndice;
                 dgvAtributos.Rows[n].Cells[6].Value = atr.dirSigAtributo;
+                if (atr.tipoIndice == 6)
+                {
+                    dgvAtributos.Rows[n].Cells[5].Value = 0;
+                }
             }
         }
 
@@ -332,14 +356,19 @@ namespace Diccionario_de_datos
             }
             actualizaDGVAtr();
         }
-        public List<string> regresaDatos() {
+        public List<string> regresaDatos()
+        {
             return entidadSel.lsDatos;
         }
         /*Evento de insertar un nuevo registro de información*/
         private void bt_InsertaRegistro_Click(object sender, EventArgs e)
         {
             int t = tamañoDeRegistro();
-            Form3 f3 = new Form3(entidadSel.nombre, entidadSel.lsAtributo, t, entidadSel.dirDatos, entidadSel);
+            if (entidadSel.dirDatos == -1)
+            {
+                entidadSel.dirDatos = 0;
+            }
+            Form3 f3 = new Form3(entidadSel.nombre, entidadSel.lsAtributo, t, entidadSel.dirDatos, entidadSel, Aux);
             f3.ShowDialog();
             entidadSel.dirDatos = f3.regresaCabecera();
 
@@ -459,7 +488,60 @@ namespace Diccionario_de_datos
             }
         }
         public void creaCajonHASHpRINCIPAL()
-        {
+        {/*
+            long poscajon = 56;
+            CajonHash aux = new CajonHash();
+            aux.dircajon = poscajon;
+            CajonesHash.Add(aux);
+            CajPrinHach.Add(poscajon);
+            */
+            /*
+            poscajon = (1040 * 5) + 56;
+            CajonHash aux2 = new CajonHash();
+            aux2.dircajon = (1040*5)+56;
+            CajonesHash.Add(aux2);
+            CajPrinHach.Add(poscajon);
+
+            poscajon = (1040 * 2) + 56;
+            CajonHash aux3 = new CajonHash();
+            aux3.dircajon = (1040 * 2) + 56;
+            CajonesHash.Add(aux3);
+            CajPrinHach.Add(poscajon);
+
+            poscajon = (1040 * 3) + 56;
+            CajonHash aux4 = new CajonHash();
+            aux4.dircajon = (1040 * 3) + 56;
+            CajonesHash.Add(aux4);
+            CajPrinHach.Add(poscajon);
+
+            poscajon = (1040 * 1) + 56;
+            CajonHash aux5 = new CajonHash();
+            aux5.dircajon = (1040 * 1) + 56;
+            CajonesHash.Add(aux5);
+            CajPrinHach.Add(poscajon);
+
+            poscajon = (1040 * 4) + 56;
+            CajonHash aux6 = new CajonHash();
+            aux6.dircajon = (1040 * 6) + 56;
+            CajonesHash.Add(aux6);
+            CajPrinHach.Add(poscajon);
+
+            poscajon = -1;
+            CajonHash aux7 = new CajonHash();
+            aux7.dircajon = -1;
+            CajonesHash.Add(aux7);
+            CajPrinHach.Add(poscajon);
+            */
+            /*
+            for (int i = 0; i < 7; i++)
+            {
+                CajonHash aux2 = new CajonHash();
+                CajonesHashAUX.Add(aux2);      
+                CajPrinHachAUX.Add(poscajon);
+                CajPrinHachAUX2.Add(poscajon);
+                poscajon += 1040;
+            }*/
+            //LLENO UN ARREGLO LONG CON LOS VALORES DEL CAJON PRINCIPAL,56,1096,ETC
             long poscajon = 56;
 
             for (int i = 0; i < 7; i++)
@@ -469,18 +551,37 @@ namespace Diccionario_de_datos
                 CajonesHash.Add(aux);
 
                 CajPrinHach.Add(poscajon);
+
                 poscajon += 1040;
 
             }
         }
+        //Funcion que abre mi archivo de datos para asi usarlos despues en el hash
         private void abreArchivoRegistros()
         {
             int tam2 = entidadSel.ToString().Length;
-            string vv = entidadSel.nombre.ToString().Replace(" ", "");
-            if (File.Exists(entidadSel.nombre + ".dat"))
+            string vv = Aux[detectaInd()].nombre.ToString() + ".dat";
+            string arhicvoDatosDistinto8 = entidadSel.nombre + ".dat";
+            if (cb_TipoIndice.Text == "8")
             {
+                arhicvoDatosDistinto8 = vv;
+            }
+
+
+
+            if (File.Exists(arhicvoDatosDistinto8))
+            {
+                List<string> datosaux = new List<string>();
                 FileStream abre;
-                abre = File.Open(entidadSel.nombre + ".dat", FileMode.Open);
+                if (cb_TipoIndice.Text == "8")
+                {
+                    abre = File.Open(arhicvoDatosDistinto8, FileMode.Open);
+                }
+                else
+                {
+                    abre = File.Open(entidadSel.nombre + ".dat", FileMode.Open);
+
+                }
                 BinaryReader br = new BinaryReader(abre);
                 long dirSiguiente = 0;
                 long posicion = entidadSel.dirDatos;
@@ -506,8 +607,14 @@ namespace Diccionario_de_datos
                                 int entero = br.ReadInt32();
                                 if (atr.tipoIndice == 6)
                                 {
-                                    vs.Add(entero);
-                                    vs2.Add(posicion);
+                                    vs.Add(entero);//arreglo que guarda el valor de la clave 6
+                                    vs2.Add(posicion);//arreglo que guarda la direccion donde esta ese dato
+                                }
+                                if (atr.tipoIndice == 2)
+                                {
+
+                                    datosaux.Add(entero.ToString());
+
                                 }
 
                                 break;
@@ -527,8 +634,15 @@ namespace Diccionario_de_datos
                 }
 
                 abre.Close();
+                foreach (var item in datosaux)
+                {
+                    Aux[detectaInd()].lsDatos.Add(item.ToString());
+                }
+
+
             }
         }
+        //no funciona
         private void cargaIDXHash()
         {
             fileidx = File.Open(entidadSel.nombre + ".idxs", FileMode.OpenOrCreate, FileAccess.ReadWrite);
@@ -537,31 +651,392 @@ namespace Diccionario_de_datos
             fileidx.Close();
 
         }
+        //checar clase cajon y DatoCajon
         private void hashEsbtn_Click(object sender, EventArgs e)
         {
+            //limbiar listas para que los datos no se dupliquen 
             CajPrinHach.Clear();
             CajonesHash.Clear();
+            CajonesHashAUX.Clear();
+            CajPrinHachAUX.Clear();
             vs.Clear();
             vs2.Clear();
+            //se crea el cajon principal
             creaCajonHASHpRINCIPAL();
+            //cargamos los datos ya ordenados por clave 6 
             abreArchivoRegistros();
-
             for (int i = 0; i < vs.Count; i++)
             {
                 DatoCajonHash auxcaj = new DatoCajonHash();
-                auxcaj.valint = vs[i];
-                auxcaj.dir = vs2[i];
+                auxcaj.valint = vs[i];//arreglo donde esta el valor de la clave
+                auxcaj.dir = vs2[i];//valor donde esta la direccion
 
-                int div = auxcaj.valint / 7;
-                int mult = div * 7;
-                int res = auxcaj.valint - mult;
+                int res = (auxcaj.valint % 7);//sacar el modulo y ver en que cajon va
+                CajonesHash[res].Cajon.Add(auxcaj);//se pone en el cajon correspondiente los datos
+                                                   //creaCajonBajoDemanda(res, auxcaj);
 
+
+            }
+            cargaIDXHash();//no funciona
+            FormaHash frm = new FormaHash(CajPrinHach, CajonesHash, fileidx.Name);//le pasas las lista donde estan las direcciones del cajonprincipal, y la lista de cajones
+            frm.Show();
+        }
+        //no le hagas caso a esto
+        private void creaCajonBajoDemanda(int res, DatoCajonHash auxcaj)
+        {
+            if (res == 0)
+            {
                 CajonesHash[res].Cajon.Add(auxcaj);
             }
-            cargaIDXHash();
-            FormaHash frm = new FormaHash(CajPrinHach, CajonesHash, fileidx.Name);
-            frm.Show();
+            else if (res == 1)
+            {
+                if (CajPrinHach.Contains(CajPrinHachAUX[res]))
+                {
+                    for (int i = 0; i < CajonesHash.Count; i++)
+                    {
+                        if (CajPrinHachAUX[res + 1] == CajonesHash[i].dircajon)
+                        {
+
+                            CajonesHash[i].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    CajonHash aux = new CajonHash();
+                    if (CajonesHash.Count == 1)
+                    {
+                        aux.dircajon = 1040 + 56;
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+                    }
+                    else if (CajonesHash.Count == 2)
+                    {
+                        aux.dircajon = (1040 * 2) + 56;
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 2) + 56);
+                    }
+                    else if (CajonesHash.Count == 3)
+                    {
+                        aux.dircajon = (1040 * 3) + 56;
+
+                    }
+                    else if (CajonesHash.Count == 4)
+                    {
+                        aux.dircajon = (1040 * 4) + 56;
+                    }
+                    else if (CajonesHash.Count == 5)
+                    {
+                        aux.dircajon = (1040 * 5) + 56;
+                    }
+
+
+                    for (int y = 0; y < CajonesHash.Count; y++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[y].dircajon)
+                        {
+                            CajonesHash[y].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (res == 2)
+            {
+                if (CajPrinHach.Contains(CajPrinHachAUX[res]))
+                {
+                    for (int i = 0; i < CajonesHash.Count; i++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[i].dircajon)
+                        {
+
+                            CajonesHash[i].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    CajonHash aux = new CajonHash();
+                    if (CajonesHash.Count == 1)
+                    {
+                        aux.dircajon = 1040 + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+                    }
+                    else if (CajonesHash.Count == 2)
+                    {
+                        aux.dircajon = (1040 * 2) + 56;
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 2) + 56);
+                    }
+                    else if (CajonesHash.Count == 3)
+                    {
+                        aux.dircajon = (1040 * 3) + 56;
+
+                    }
+                    else if (CajonesHash.Count == 4)
+                    {
+                        aux.dircajon = (1040 * 4) + 56;
+                    }
+                    else if (CajonesHash.Count == 5)
+                    {
+                        aux.dircajon = (1040 * 5) + 56;
+                    }
+
+                    for (int y = 0; y < CajonesHash.Count; y++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[y].dircajon)
+                        {
+                            CajonesHash[y].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (res == 3)
+            {
+                if (CajPrinHach.Contains(CajPrinHachAUX[res]))
+                {
+                    for (int i = 0; i < CajonesHash.Count; i++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[i].dircajon)
+                        {
+
+                            CajonesHash[i].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    CajonHash aux = new CajonHash();
+                    if (CajonesHash.Count == 1)
+                    {
+
+                        aux.dircajon = 1040 + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+                    }
+                    else if (CajonesHash.Count == 2)
+                    {
+                        aux.dircajon = (1040 * 2) + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 2) + 56);
+                    }
+                    else if (CajonesHash.Count == 3)
+                    {
+                        aux.dircajon = (1040 * 3) + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 3) + 56);
+
+                    }
+                    else if (CajonesHash.Count == 4)
+                    {
+                        aux.dircajon = (1040 * 4) + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 4) + 56);
+                    }
+                    else if (CajonesHash.Count == 5)
+                    {
+                        aux.dircajon = (1040 * 5) + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 5) + 56);
+                    }
+
+                    for (int y = 0; y < CajonesHash.Count; y++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[y].dircajon)
+                        {
+                            CajonesHash[y].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (res == 4)
+            {
+                if (CajPrinHach.Contains(CajPrinHachAUX[res]))
+                {
+                    for (int i = 0; i < CajonesHash.Count; i++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[i].dircajon)
+                        {
+
+                            CajonesHash[i].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    CajonHash aux = new CajonHash();
+                    if (CajonesHash.Count == 1)
+                    {
+                        aux.dircajon = 1040 + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+                    }
+                    else if (CajonesHash.Count == 2)
+                    {
+                        aux.dircajon = (1040 * 2) + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 2) + 56);
+                    }
+                    else if (CajonesHash.Count == 3)
+                    {
+                        aux.dircajon = (1040 * 3) + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 3) + 56);
+
+                    }
+                    else if (CajonesHash.Count == 4)
+                    {
+                        aux.dircajon = (1040 * 4) + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 4) + 56);
+                    }
+                    else if (CajonesHash.Count == 5)
+                    {
+                        aux.dircajon = (1040 * 5) + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add((1040 * 5) + 56);
+                    }
+
+
+
+
+                    for (int y = 0; y < CajonesHash.Count; y++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[y].dircajon)
+                        {
+                            CajonesHash[y].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (res == 5)
+            {
+                if (CajPrinHach.Contains(CajPrinHachAUX[res]))
+                {
+                    for (int i = 0; i < CajonesHash.Count; i++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[i].dircajon)
+                        {
+
+                            CajonesHash[i].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    CajonHash aux = new CajonHash();
+                    if (CajonesHash.Count == 1)
+                    {
+                        aux.dircajon = 1040 + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+                    }
+                    else if (CajonesHash.Count == 2)
+                    {
+                        aux.dircajon = 1040 + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+                    }
+                    else if (CajonesHash.Count == 3)
+                    {
+                        aux.dircajon = 1040 + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+
+                    }
+                    else if (CajonesHash.Count == 4)
+                    {
+                        aux.dircajon = 1040 + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+                    }
+                    else if (CajonesHash.Count == 5)
+                    {
+                        aux.dircajon = 1040 + 56;
+                        aux.Cajon.Add(auxcaj);
+                        CajonesHash.Add(aux);
+                        CajPrinHach.Add(1040 + 56);
+                    }
+
+
+
+
+                    for (int y = 0; y < CajonesHash.Count; y++)
+                    {
+                        if (CajPrinHachAUX[res] == CajonesHash[y].dircajon)
+                        {
+                            CajonesHash[y].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (res == 6)
+            {
+
+            }
+
+            /*
+            if (res == 0)
+            {
+                CajonesHash[res].Cajon.Add(auxcaj);
+            }
+            else
+            {
+                
+                long poscajon = (1040 * (res + 1)) + 56;
+                CajonHash aux = new CajonHash();
+                aux.dircajon = poscajon;
+                if (CajPrinHach.Contains(poscajon))
+                {
+                    for (int i = 0; i < CajonesHash.Count; i++)
+                    {
+                        if (poscajon == CajonesHash[i].dircajon)
+                        {
+
+                            CajonesHash[i].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    CajonesHash.Add(aux);
+                    CajPrinHach.Add(poscajon);
+                    for (int y = 0; y < CajonesHash.Count; y++)
+                    {
+                        if (poscajon == CajonesHash[y].dircajon)
+                        {
+                            CajonesHash[y].Cajon.Add(auxcaj);
+                            break;
+                        }
+                    }
+                }
+            }*/
         }
     }
 }
-

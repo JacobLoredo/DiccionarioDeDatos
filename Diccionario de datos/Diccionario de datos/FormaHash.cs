@@ -23,7 +23,7 @@ namespace Diccionario_de_datos
             principal = prin;
             cajones = sec;
             namef = namefile;
-            escribeIDX();
+            //escribeIDX();
             inicializaprin();
             inicializacajones();
         }
@@ -55,13 +55,36 @@ namespace Diccionario_de_datos
 
         private void inicializaprin()
         {
-            for (int i = 0; i < 7; i++)
+            //aqui detecto cuantos cajones tiene datos para asi mostrar 56,1096,etc
+            //
+            int contaux = 0;
+            for (int i = 0; i < cajones.Count; i++)
+            {
+                if (cajones[i].Cajon.Count >= 1)
+                {
+                    contaux++;
+
+                }
+            }
+
+            //aqui agrego el indice 56,1096,etc al datagridview 
+            for (int i = 0; i < contaux; i++)
             {
                 dataGridView1.Rows.Add();
-                dataGridView1.Rows[i].Cells[0].Value = principal[i];
+                if (principal.Count > i)
+                {
+                    dataGridView1.Rows[i].Cells[0].Value = principal[i];
+
+                }
+                else
+                {
+
+                    dataGridView1.Rows[i].Cells[0].Value = -1;
+                }
 
             }
         }
+        //inicializa los cajones siu es que tienen datos 
         private void inicializacajones()
         {
             for (int i = 0; i < cajones[0].Cajon.Count; i++)
@@ -106,6 +129,150 @@ namespace Diccionario_de_datos
                 dataGridView8.Rows[i].Cells[0].Value = cajones[6].Cajon[i].valint;
                 dataGridView8.Rows[i].Cells[1].Value = cajones[6].Cajon[i].dir;
             }
+            /*
+            for (int i = 0; i < cajones.Count; i++)
+            {
+                if (cajones[i].dircajon==56)
+                {
+                    for (int j = 0; j < cajones[i].Cajon.Count; j++)
+                    {
+                        dataGridView2.Rows.Add();
+                        dataGridView2.Rows[j].Cells[0].Value = cajones[i].Cajon[j].valint;
+                        dataGridView2.Rows[j].Cells[1].Value = cajones[i].Cajon[j].dir;
+                    }
+                }
+                else if(cajones[i].dircajon == 1096)
+                {
+                    for (int j = 0; j < cajones[i].Cajon.Count; j++)
+                    {
+                        dataGridView6.Rows.Add();
+                        dataGridView6.Rows[j].Cells[0].Value = cajones[i].Cajon[j].valint;
+                        dataGridView6.Rows[j].Cells[1].Value = cajones[i].Cajon[j].dir;
+                    }
+                    
+
+                }
+                else if (cajones[i].dircajon == 2136)
+                {
+                    for (int j = 0; j < cajones[i].Cajon.Count; j++)
+                    {
+                        dataGridView4.Rows.Add();
+                        dataGridView4.Rows[j].Cells[0].Value = cajones[i].Cajon[j].valint;
+                        dataGridView4.Rows[j].Cells[1].Value = cajones[i].Cajon[j].dir;
+                    }
+
+                }
+                else if (cajones[i].dircajon == 3176)
+                {
+                    for (int j = 0; j < cajones[i].Cajon.Count; j++)
+                    {
+                        dataGridView5.Rows.Add();
+                        dataGridView5.Rows[j].Cells[0].Value = cajones[i].Cajon[j].valint;
+                        dataGridView5.Rows[j].Cells[1].Value = cajones[i].Cajon[j].dir;
+                    }
+
+                }
+                else if (cajones[i].dircajon == 4216)
+                {
+                    for (int j = 0; j < cajones[i].Cajon.Count; j++)
+                    {
+                        dataGridView6.Rows.Add();
+                        dataGridView6.Rows[j].Cells[0].Value = cajones[i].Cajon[j].valint;
+                        dataGridView6.Rows[j].Cells[1].Value = cajones[i].Cajon[j].dir;
+                    }
+
+                }
+                else if (cajones[i].dircajon == 5256)
+                {
+                    for (int j = 0; j < cajones[i].Cajon.Count; j++)
+                    {
+                        dataGridView3.Rows.Add();
+                        dataGridView3.Rows[j].Cells[0].Value = cajones[i].Cajon[j].valint;
+                        dataGridView3.Rows[j].Cells[1].Value = cajones[i].Cajon[j].dir;
+                    }
+
+                }
+                else if (cajones[i].dircajon == 6296)
+                {
+                    for (int j = 0; j < cajones[i].Cajon.Count; j++)
+                    {
+                        dataGridView8.Rows.Add();
+                        dataGridView8.Rows[j].Cells[0].Value = cajones[i].Cajon[j].valint;
+                        dataGridView8.Rows[j].Cells[1].Value = cajones[i].Cajon[j].dir;
+                    }
+
+                }
+            }
+            */
+            /*
+            if (cajones[0].dircajon==56)
+            {
+            for (int i = 0; i < cajones[0].Cajon.Count; i++)
+            {
+                dataGridView2.Rows.Add();
+                dataGridView2.Rows[i].Cells[0].Value = cajones[0].Cajon[i].valint;
+                dataGridView2.Rows[i].Cells[1].Value = cajones[0].Cajon[i].dir;
+            }
+            }
+            if (cajones.Count >= 2)
+            {
+               
+
+                
+            for (int i = 0; i < cajones[1].Cajon.Count; i++)
+            {
+                dataGridView3.Rows.Add();
+                dataGridView3.Rows[i].Cells[0].Value = cajones[1].Cajon[i].valint;
+                dataGridView3.Rows[i].Cells[1].Value = cajones[1].Cajon[i].dir;
+            }
+                
+            }
+            if (cajones.Count >=3)
+            {
+            for (int i = 0; i < cajones[2].Cajon.Count; i++)
+            {
+                dataGridView4.Rows.Add();
+                dataGridView4.Rows[i].Cells[0].Value = cajones[2].Cajon[i].valint;
+                dataGridView4.Rows[i].Cells[1].Value = cajones[2].Cajon[i].dir;
+            }
+            }
+            if (cajones.Count >= 4)
+            {
+                for (int i = 0; i < cajones[3].Cajon.Count; i++)
+            {
+                dataGridView5.Rows.Add();
+                dataGridView5.Rows[i].Cells[0].Value = cajones[3].Cajon[i].valint;
+                dataGridView5.Rows[i].Cells[1].Value = cajones[3].Cajon[i].dir;
+            }
+            }
+            if (cajones.Count >= 5)
+            {
+                for (int i = 0; i < cajones[4].Cajon.Count; i++)
+            {
+                dataGridView6.Rows.Add();
+                dataGridView6.Rows[i].Cells[0].Value = cajones[4].Cajon[i].valint;
+                dataGridView6.Rows[i].Cells[1].Value = cajones[4].Cajon[i].dir;
+            }
+            }
+            if (cajones.Count >= 6)
+            {
+                for (int i = 0; i < cajones[5].Cajon.Count; i++)
+            {
+                dataGridView7.Rows.Add();
+                dataGridView7.Rows[i].Cells[0].Value = cajones[5].Cajon[i].valint;
+                dataGridView7.Rows[i].Cells[1].Value = cajones[5].Cajon[i].dir;
+            }
+            }
+            if (cajones.Count >= 7)
+            {
+
+                for (int i = 0; i < cajones[6].Cajon.Count; i++)
+            {
+                dataGridView8.Rows.Add();
+                dataGridView8.Rows[i].Cells[0].Value = cajones[6].Cajon[i].valint;
+                dataGridView8.Rows[i].Cells[1].Value = cajones[6].Cajon[i].dir;
+            }
+           }*/
         }
 
         private void FormaHash_FormClosing(object sender, FormClosingEventArgs e)
@@ -117,7 +284,10 @@ namespace Diccionario_de_datos
             dataGridView6.Rows.Clear();
             dataGridView7.Rows.Clear();
             dataGridView8.Rows.Clear();
-          
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
 
         }
     }

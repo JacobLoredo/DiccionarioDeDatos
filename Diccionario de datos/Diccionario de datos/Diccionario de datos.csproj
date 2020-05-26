@@ -103,6 +103,9 @@
     <EmbeddedResource Include="Form4.resx">
       <DependentUpon>Form4.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormaHash.resx">
+      <DependentUpon>FormaHash.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormBusqueda.resx">
       <DependentUpon>FormBusqueda.cs</DependentUpon>
     </EmbeddedResource>
